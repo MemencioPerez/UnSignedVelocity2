@@ -5,7 +5,7 @@ import com.velocitypowered.api.event.EventManager;
 import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
-import com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedPlayerChat;
+import com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedPlayerChatPacket;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.EventListener;
@@ -26,7 +26,7 @@ public final class KeyedChatListener implements EventListener {
 
     private void onChat(final PacketReceiveEvent event) {
         // Packet sent by players with version 1.19 and 1.19.1
-        if (!(event.getPacket() instanceof final KeyedPlayerChat chatPacket)) {
+        if (!(event.getPacket() instanceof final KeyedPlayerChatPacket chatPacket)) {
             return;
         }
 

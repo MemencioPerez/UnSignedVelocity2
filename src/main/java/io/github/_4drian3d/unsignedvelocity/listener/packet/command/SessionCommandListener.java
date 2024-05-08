@@ -8,7 +8,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.proxy.VelocityServer;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.chat.CommandHandler;
-import com.velocitypowered.proxy.protocol.packet.chat.session.SessionPlayerCommand;
+import com.velocitypowered.proxy.protocol.packet.chat.session.SessionPlayerCommandPacket;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.EventListener;
@@ -16,7 +16,7 @@ import io.github._4drian3d.vpacketevents.api.event.PacketReceiveEvent;
 
 import java.util.concurrent.CompletableFuture;
 
-public final class SessionCommandListener implements EventListener, CommandHandler<SessionPlayerCommand> {
+public final class SessionCommandListener implements EventListener, CommandHandler<SessionPlayerCommandPacket> {
     @Inject
     private Configuration configuration;
     @Inject
@@ -41,7 +41,7 @@ public final class SessionCommandListener implements EventListener, CommandHandl
     }
 
     public void onCommand(final PacketReceiveEvent event) {
-        if (!(event.getPacket() instanceof final SessionPlayerCommand packet)) {
+        if (!(event.getPacket() instanceof final SessionPlayerCommandPacket packet)) {
             return;
         }
 
@@ -89,12 +89,12 @@ public final class SessionCommandListener implements EventListener, CommandHandl
     }
 
     @Override
-    public Class<SessionPlayerCommand> packetClass() {
-        return SessionPlayerCommand.class;
+    public Class<SessionPlayerCommandPacket> packetClass() {
+        return SessionPlayerCommandPacket.class;
     }
 
     @Override
-    public void handlePlayerCommandInternal(SessionPlayerCommand sessionPlayerCommand) {
+    public void handlePlayerCommandInternal(SessionPlayerCommandPacket sessionPlayerCommand) {
         // noop
     }
 }

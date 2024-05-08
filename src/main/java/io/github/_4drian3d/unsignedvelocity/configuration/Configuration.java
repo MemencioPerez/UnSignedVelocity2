@@ -1,7 +1,7 @@
 package io.github._4drian3d.unsignedvelocity.configuration;
 
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
+import org.spongepowered.configurate.CommentedConfigurationNode;
+import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,18 +20,18 @@ public interface Configuration {
     static Configuration loadConfig(final Path path) throws IOException {
         final Path configPath = loadFiles(path);
         final HoconConfigurationLoader loader = HoconConfigurationLoader.builder()
-                .setPath(configPath)
+                .path(configPath)
                 .build();
 
         final CommentedConfigurationNode loaded = loader.load();
 
-        final boolean removeSignedKey = loaded.getNode("remove-signed-key-on-join")
+        final boolean removeSignedKey = loaded.node("remove-signed-key-on-join")
                 .getBoolean(false);
-        final boolean removeSigneCommandInformation = loaded.getNode("remove-signed-command-information")
+        final boolean removeSigneCommandInformation = loaded.node("remove-signed-command-information")
                 .getBoolean(false);
-        final boolean applyChatMessages = loaded.getNode("apply-chat-messages")
+        final boolean applyChatMessages = loaded.node("apply-chat-messages")
                 .getBoolean(true);
-        final boolean sendSecureChatData = loaded.getNode("send-secure-chat-data")
+        final boolean sendSecureChatData = loaded.node("send-secure-chat-data")
                 .getBoolean(false);
 
         return new Configuration() {

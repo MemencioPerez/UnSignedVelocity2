@@ -5,7 +5,7 @@ import com.velocitypowered.api.event.EventManager;
 import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
-import com.velocitypowered.proxy.protocol.packet.chat.session.SessionPlayerChat;
+import com.velocitypowered.proxy.protocol.packet.chat.session.SessionPlayerChatPacket;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.EventListener;
@@ -27,7 +27,7 @@ public final class SessionChatListener implements EventListener {
 
     private void onChat(PacketReceiveEvent event) {
         // Packet sent by players with version 1.19.3 and up
-        if (!(event.getPacket() instanceof final SessionPlayerChat chatPacket)) {
+        if (!(event.getPacket() instanceof final SessionPlayerChatPacket chatPacket)) {
             return;
         }
 

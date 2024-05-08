@@ -2,7 +2,7 @@ package io.github._4drian3d.unsignedvelocity.listener.packet.data;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.EventManager;
-import com.velocitypowered.proxy.protocol.packet.ServerData;
+import com.velocitypowered.proxy.protocol.packet.ServerDataPacket;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.EventListener;
@@ -16,8 +16,8 @@ public final class ServerDataListener implements EventListener {
 
     static {
         try {
-            final MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(ServerData.class, MethodHandles.lookup());
-            ENFORCED_SETTER = lookup.findSetter(ServerData.class, "secureChatEnforced", Boolean.TYPE);
+            final MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(ServerDataPacket.class, MethodHandles.lookup());
+            ENFORCED_SETTER = lookup.findSetter(ServerDataPacket.class, "secureChatEnforced", Boolean.TYPE);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -36,7 +36,7 @@ public final class ServerDataListener implements EventListener {
     }
 
     private void onData(final PacketSendEvent event) {
-        if (!(event.getPacket() instanceof final ServerData serverData)) {
+        if (!(event.getPacket() instanceof final ServerDataPacket serverData)) {
             return;
         }
 
