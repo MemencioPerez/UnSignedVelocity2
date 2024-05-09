@@ -9,10 +9,12 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.EventListener;
-import io.github._4drian3d.unsignedvelocity.listener.event.ConnectListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.command.CommandListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.data.ServerDataListener;
+import io.github._4drian3d.unsignedvelocity.listener.packet.login.EncryptionRequestListener;
+import io.github._4drian3d.unsignedvelocity.listener.packet.login.EncryptionResponseListener;
+import io.github._4drian3d.unsignedvelocity.listener.packet.login.LoginStartListener;
 import io.github._4drian3d.unsignedvelocity.utils.Constants;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bstats.velocity.Metrics;
@@ -59,7 +61,9 @@ public final class UnSignedVelocity {
         );
 
         Stream.of(
-            ConnectListener.class,
+            LoginStartListener.class,
+            EncryptionRequestListener.class,
+            EncryptionResponseListener.class,
             CommandListener.class,
             ChatListener.class,
             ServerDataListener.class
