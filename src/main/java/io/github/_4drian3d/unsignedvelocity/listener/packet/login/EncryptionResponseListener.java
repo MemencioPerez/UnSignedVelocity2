@@ -1,7 +1,7 @@
 package io.github._4drian3d.unsignedvelocity.listener.packet.login;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListener;
+import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
@@ -10,8 +10,7 @@ import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.wrapper.login.client.WrapperLoginClientEncryptionResponse;
 import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
-import io.github._4drian3d.unsignedvelocity.listener.EventListener;
+import io.github._4drian3d.unsignedvelocity.listener.LoadableEventListener;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 
 import javax.crypto.Cipher;
@@ -19,24 +18,21 @@ import java.security.PublicKey;
 
 import static io.github._4drian3d.unsignedvelocity.listener.packet.login.EncryptionRequestListener.serverEncryptionDataCache;
 
-public final class EncryptionResponseListener implements EventListener, PacketListener {
-    @Inject
-    private Configuration configuration;
-    @Inject
-    private UnSignedVelocity plugin;
-    @Inject
-    private ComponentLogger logger;
+public final class EncryptionResponseListener extends PacketListenerAbstract implements LoadableEventListener {
+    private final UnSignedVelocity plugin;
 
-    @Override
-    public void register() {
-        PacketEvents.getAPI()
-                .getEventManager()
-                .registerListener(this, PacketListenerPriority.LOWEST);
+    @Inject
+    public EncryptionResponseListener(UnSignedVelocity plugin) {
+        super(PacketListenerPriority.LOWEST);
+        this.plugin = plugin;
     }
 
     @Override
+    public void register(UnSignedVelocity plugin) { PacketEvents.getAPI().getEventManager().registerListener(new EncryptionResponseListener(plugin)); }
+
+    @Override
     public boolean canBeLoaded() {
-        return configuration.removeSignedKey();
+        return plugin.getConfiguration().removeSignedKey();
     }
 
     @Override
@@ -56,8 +52,8 @@ public final class EncryptionResponseListener implements EventListener, PacketLi
 
         // If the packet has a Salt Signature and server encryption data cache contains a value for the user, remove it and generate a Verify Token instead
         if (packet.getSaltSignature().isPresent() && serverEncryptionDataCache.containsKey(user)) {
-            PublicKey serverPublicKey = serverEncryptionDataCache.get(user).getPublicKey();
-            byte[] serverVerifyToken = serverEncryptionDataCache.get(user).getVerifyToken();
+            PublicKey serverPublicKey = serverEncryptionDataCache.get(user).publicKey();
+            byte[] serverVerifyToken = serverEncryptionDataCache.get(user).verifyToken();
             byte[] newEncryptedVerifyToken = encryptVerifyToken(serverPublicKey, serverVerifyToken);
 
             replaceSaltSignatureWithVerifyToken(packet, newEncryptedVerifyToken);
@@ -77,6 +73,7 @@ public final class EncryptionResponseListener implements EventListener, PacketLi
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             encryptedVerifyToken = cipher.doFinal(verifyToken);
         } catch (Exception e) {
+            ComponentLogger logger = plugin.getLogger();
             logger.error("An error occurred while trying to encrypt the Verify Token for ENCRYPTION_RESPONSE packet.", e);
         }
         return encryptedVerifyToken;

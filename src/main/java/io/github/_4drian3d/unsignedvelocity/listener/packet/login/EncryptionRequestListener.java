@@ -1,7 +1,7 @@
 package io.github._4drian3d.unsignedvelocity.listener.packet.login;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListener;
+import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
@@ -9,29 +9,27 @@ import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.wrapper.login.server.WrapperLoginServerEncryptionRequest;
 import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
-import io.github._4drian3d.unsignedvelocity.listener.EventListener;
+import io.github._4drian3d.unsignedvelocity.listener.LoadableEventListener;
 
 import java.security.PublicKey;
 import java.util.WeakHashMap;
 
-public final class EncryptionRequestListener implements EventListener, PacketListener {
-    @Inject
-    private Configuration configuration;
-    @Inject
-    private UnSignedVelocity plugin;
-    public static WeakHashMap<User, ServerEncryptionData> serverEncryptionDataCache = new WeakHashMap<>();
+public final class EncryptionRequestListener extends PacketListenerAbstract implements LoadableEventListener {
+    private final UnSignedVelocity plugin;
+    public static final WeakHashMap<User, ServerEncryptionData> serverEncryptionDataCache = new WeakHashMap<>();
 
-    @Override
-    public void register() {
-        PacketEvents.getAPI()
-                .getEventManager()
-                .registerListener(this, PacketListenerPriority.LOWEST);
+    @Inject
+    public EncryptionRequestListener(UnSignedVelocity plugin) {
+        super(PacketListenerPriority.LOWEST);
+        this.plugin = plugin;
     }
 
     @Override
+    public void register(UnSignedVelocity plugin) { PacketEvents.getAPI().getEventManager().registerListener(new EncryptionRequestListener(plugin)); }
+
+    @Override
     public boolean canBeLoaded() {
-        return configuration.removeSignedKey();
+        return plugin.getConfiguration().removeSignedKey();
     }
 
     @Override
@@ -55,21 +53,5 @@ public final class EncryptionRequestListener implements EventListener, PacketLis
         serverEncryptionDataCache.put(user, new ServerEncryptionData(serverPacketKey, serverVerifyToken));
     }
 
-    public static final class ServerEncryptionData {
-        PublicKey publicKey;
-        byte[] verifyToken;
-
-        public ServerEncryptionData(PublicKey publicKey, byte[] verifyToken) {
-            this.publicKey = publicKey;
-            this.verifyToken = verifyToken;
-        }
-
-        public PublicKey getPublicKey() {
-            return publicKey;
-        }
-
-        public byte[] getVerifyToken() {
-            return verifyToken;
-        }
-    }
+    public record ServerEncryptionData(PublicKey publicKey, byte[] verifyToken) {}
 }

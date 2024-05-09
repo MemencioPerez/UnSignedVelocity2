@@ -3,9 +3,11 @@ package io.github._4drian3d.unsignedvelocity.listener;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
+import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
 
-public interface EventListener {
-    void register();
+public interface LoadableEventListener {
+    void register(UnSignedVelocity plugin);
+
     boolean canBeLoaded();
 
     default boolean checkConnection(final ConnectedPlayer player) {

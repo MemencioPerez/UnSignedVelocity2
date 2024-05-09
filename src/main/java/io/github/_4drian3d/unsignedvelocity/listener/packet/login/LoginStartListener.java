@@ -1,7 +1,7 @@
 package io.github._4drian3d.unsignedvelocity.listener.packet.login;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListener;
+import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
@@ -9,27 +9,23 @@ import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.wrapper.login.client.WrapperLoginClientLoginStart;
 import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
-import io.github._4drian3d.unsignedvelocity.listener.EventListener;
+import io.github._4drian3d.unsignedvelocity.listener.LoadableEventListener;
 
-import java.util.HashSet;
+public final class LoginStartListener extends PacketListenerAbstract implements LoadableEventListener {
+    private final UnSignedVelocity plugin;
 
-public final class LoginStartListener implements EventListener, PacketListener {
     @Inject
-    private Configuration configuration;
-    @Inject
-    private UnSignedVelocity plugin;
-
-    @Override
-    public void register() {
-        PacketEvents.getAPI()
-                .getEventManager()
-                .registerListener(this, PacketListenerPriority.LOWEST);
+    public LoginStartListener(UnSignedVelocity plugin) {
+        super(PacketListenerPriority.LOWEST);
+        this.plugin = plugin;
     }
 
     @Override
+    public void register(UnSignedVelocity plugin) { PacketEvents.getAPI().getEventManager().registerListener(new LoginStartListener(plugin)); }
+
+    @Override
     public boolean canBeLoaded() {
-        return configuration.removeSignedKey();
+        return plugin.getConfiguration().removeSignedKey();
     }
 
     @Override

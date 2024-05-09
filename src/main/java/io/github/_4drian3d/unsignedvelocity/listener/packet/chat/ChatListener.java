@@ -1,7 +1,7 @@
 package io.github._4drian3d.unsignedvelocity.listener.packet.chat;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListener;
+import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
@@ -11,22 +11,25 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCh
 import com.google.inject.Inject;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
-import io.github._4drian3d.unsignedvelocity.listener.EventListener;
+import io.github._4drian3d.unsignedvelocity.listener.LoadableEventListener;
 
 import java.time.Instant;
 
-public final class ChatListener implements EventListener, PacketListener {
+public final class ChatListener extends PacketListenerAbstract implements LoadableEventListener {
+    private final UnSignedVelocity plugin;
+
     @Inject
-    private UnSignedVelocity plugin;
-    @Inject
-    private Configuration configuration;
+    public ChatListener(UnSignedVelocity plugin) {
+        super(PacketListenerPriority.LOWEST);
+        this.plugin = plugin;
+    }
 
     @Override
-    public void register() {
-        PacketEvents.getAPI()
-                .getEventManager()
-                .registerListener(this, PacketListenerPriority.LOWEST);
+    public void register(UnSignedVelocity plugin) { PacketEvents.getAPI().getEventManager().registerListener(new ChatListener(plugin)); }
+
+    @Override
+    public boolean canBeLoaded() {
+        return plugin.getConfiguration().applyChatMessages();
     }
 
     @Override
@@ -49,10 +52,5 @@ public final class ChatListener implements EventListener, PacketListener {
         MessageSignData packetMessageSignData = packet.getMessageSignData().get();
         Instant packetTimestamp = packetMessageSignData.getTimestamp();
         packet.setMessageSignData(new MessageSignData(new SaltSignature(0L, new byte[0]), packetTimestamp)); // Setting the message salt long to 0L and signature byte array length to zero to disable chat signing
-    }
-
-    @Override
-    public boolean canBeLoaded() {
-        return configuration.applyChatMessages();
     }
 }

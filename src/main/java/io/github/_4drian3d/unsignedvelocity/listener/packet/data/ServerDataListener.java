@@ -1,27 +1,30 @@
 package io.github._4drian3d.unsignedvelocity.listener.packet.data;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListener;
+import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerJoinGame;
 import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
-import io.github._4drian3d.unsignedvelocity.listener.EventListener;
+import io.github._4drian3d.unsignedvelocity.listener.LoadableEventListener;
 
-public final class ServerDataListener implements EventListener, PacketListener {
+public final class ServerDataListener extends PacketListenerAbstract implements LoadableEventListener {
+    private final UnSignedVelocity plugin;
+
     @Inject
-    private UnSignedVelocity plugin;
-    @Inject
-    private Configuration configuration;
+    public ServerDataListener(UnSignedVelocity plugin) {
+        super(PacketListenerPriority.LOWEST);
+        this.plugin = plugin;
+    }
 
     @Override
-    public void register() {
-        PacketEvents.getAPI()
-                .getEventManager()
-                .registerListener(this, PacketListenerPriority.NORMAL);
+    public void register(UnSignedVelocity plugin) { PacketEvents.getAPI().getEventManager().registerListener(new ServerDataListener(plugin)); }
+
+    @Override
+    public boolean canBeLoaded() {
+        return plugin.getConfiguration().sendSecureChatData();
     }
 
     @Override
@@ -33,10 +36,5 @@ public final class ServerDataListener implements EventListener, PacketListener {
         if (!packet.isEnforcesSecureChat()) {
             packet.setEnforcesSecureChat(true);
         }
-    }
-
-    @Override
-    public boolean canBeLoaded() {
-        return configuration.sendSecureChatData();
     }
 }
