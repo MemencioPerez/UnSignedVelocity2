@@ -49,7 +49,9 @@ tasks {
     runVelocity {
         val packetEventsVersion = libs.versions.packetevents.get()
         downloadPlugins {
-            github("retrooper", "packetevents", "v" + packetEventsVersion, "packetevents-velocity-" + packetEventsVersion + ".jar")
+            github("retrooper", "packetevents", "v$packetEventsVersion",
+                "packetevents-velocity-$packetEventsVersion.jar"
+            )
         }
         velocityVersion(libs.versions.velocity.get())
     }
