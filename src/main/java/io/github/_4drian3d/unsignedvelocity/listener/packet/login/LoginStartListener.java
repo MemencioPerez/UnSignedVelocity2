@@ -10,6 +10,7 @@ import com.github.retrooper.packetevents.wrapper.login.client.WrapperLoginClient
 import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
 import io.github._4drian3d.unsignedvelocity.listener.LoadableEventListener;
+import io.github._4drian3d.unsignedvelocity.utils.ClientVersionUtil;
 
 public final class LoginStartListener extends PacketListenerAbstract implements LoadableEventListener {
     private final UnSignedVelocity plugin;
@@ -37,7 +38,7 @@ public final class LoginStartListener extends PacketListenerAbstract implements 
 
         // If the user client version isn't V_1_19 (1.19) or V_1_19_1 (1.19.1/2), do nothing
         final User user = event.getUser();
-        if (!userClientVersionEnforcesSigning(user)) {
+        if (ClientVersionUtil.doesNotEnforceSignedChatOnLogin(user)) {
             return;
         }
 

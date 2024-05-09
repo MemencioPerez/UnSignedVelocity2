@@ -12,6 +12,7 @@ import com.google.inject.Inject;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
 import io.github._4drian3d.unsignedvelocity.listener.LoadableEventListener;
+import io.github._4drian3d.unsignedvelocity.utils.ConnectionUtil;
 
 import java.time.Instant;
 
@@ -39,7 +40,7 @@ public final class CommandListener extends PacketListenerAbstract implements Loa
             return;
         }
         final ConnectedPlayer player = (ConnectedPlayer) event.getPlayer();
-        if (!checkConnection(player)) return;
+        if (ConnectionUtil.hasDisconnected(player)) return;
 
         final WrapperPlayClientChatCommand packet = new WrapperPlayClientChatCommand(event);
         MessageSignData packetMessageSignData = packet.getMessageSignData();
