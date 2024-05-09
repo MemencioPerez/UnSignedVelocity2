@@ -18,9 +18,14 @@ dependencies {
     compileOnly(libs.vpacketevents)
 }
 
-blossom {
-    replaceTokenIn("src/main/java/io/github/_4drian3d/unsignedvelocity/utils/Constants.java")
-    replaceToken("{version}", version)
+sourceSets {
+    main {
+        blossom {
+            javaSources {
+                property("version", project.version.toString())
+            }
+        }
+    }
 }
 
 tasks {
