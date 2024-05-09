@@ -1,30 +1,17 @@
 package io.github._4drian3d.unsignedvelocity.listener.packet.data;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListener;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
+import com.github.retrooper.packetevents.event.PacketSendEvent;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerJoinGame;
 import com.google.inject.Inject;
-import com.velocitypowered.api.event.EventManager;
-import com.velocitypowered.proxy.protocol.packet.ServerDataPacket;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.EventListener;
-import io.github._4drian3d.vpacketevents.api.event.PacketSendEvent;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-
-public final class ServerDataListener implements EventListener {
-    private static final MethodHandle ENFORCED_SETTER;
-
-    static {
-        try {
-            final MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(ServerDataPacket.class, MethodHandles.lookup());
-            ENFORCED_SETTER = lookup.findSetter(ServerDataPacket.class, "secureChatEnforced", Boolean.TYPE);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Inject
-    private EventManager eventManager;
+public final class ServerDataListener implements EventListener, PacketListener {
     @Inject
     private UnSignedVelocity plugin;
     @Inject
@@ -32,22 +19,19 @@ public final class ServerDataListener implements EventListener {
 
     @Override
     public void register() {
-        eventManager.register(plugin, PacketSendEvent.class, this::onData);
+        PacketEvents.getAPI()
+                .getEventManager()
+                .registerListener(this, PacketListenerPriority.NORMAL);
     }
 
-    private void onData(final PacketSendEvent event) {
-        if (!(event.getPacket() instanceof final ServerDataPacket serverData)) {
+    @Override
+    public void onPacketSend(final PacketSendEvent event) {
+        if (event.getPacketType() != PacketType.Play.Server.JOIN_GAME) {
             return;
         }
-
-        if (serverData.isSecureChatEnforced()) {
-            return;
-        }
-
-        try {
-            ENFORCED_SETTER.invoke(serverData, true);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
+        final WrapperPlayServerJoinGame packet = new WrapperPlayServerJoinGame(event);
+        if (!packet.isEnforcesSecureChat()) {
+            packet.setEnforcesSecureChat(true);
         }
     }
 

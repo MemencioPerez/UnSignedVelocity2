@@ -10,7 +10,7 @@ blossom = "2.1.0"
 runvelocity = "2.3.0"
 shadow = "8.1.1"
 
-vpacketevents = "1.1.0"
+packetevents = "2.3.0"
 
 [libraries]
 
@@ -19,7 +19,7 @@ velocity-api = { group = "com.velocitypowered", name = "velocity-api", version.r
 velocity-proxy = { group = "com.velocitypowered", name = "velocity-proxy", version.ref = "velocity" }
 # Included dependencies
 bstats = { module = "org.bstats:bstats-velocity", version.ref = "bstats" }
-vpacketevents = { group = "io.github.4drian3d", name = "vpacketevents-api", version.ref = "vpacketevents" }
+packetevents = { group = "com.github.retrooper.packetevents", name = "velocity", version.ref = "packetevents" }
 
 [plugins]
 

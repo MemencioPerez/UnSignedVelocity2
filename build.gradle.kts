@@ -8,6 +8,7 @@ plugins {
 repositories {
     maven("https://papermc.io/repo/repository/maven-public/")
     maven("https://repo.william278.net/velocity/")
+    maven("https://repo.codemc.io/repository/maven-releases/")
 }
 
 dependencies {
@@ -15,7 +16,7 @@ dependencies {
     compileOnly(libs.velocity.api)
     compileOnly(libs.velocity.proxy)
     annotationProcessor(libs.velocity.api)
-    compileOnly(libs.vpacketevents)
+    compileOnly(libs.packetevents)
 }
 
 sourceSets {
