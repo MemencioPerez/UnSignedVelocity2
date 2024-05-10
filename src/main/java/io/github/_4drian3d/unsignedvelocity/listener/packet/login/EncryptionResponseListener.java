@@ -4,17 +4,15 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
-import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.player.User;
+import com.github.retrooper.packetevents.util.crypto.MinecraftEncryptionUtil;
 import com.github.retrooper.packetevents.wrapper.login.client.WrapperLoginClientEncryptionResponse;
 import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
 import io.github._4drian3d.unsignedvelocity.listener.LoadableEventListener;
 import io.github._4drian3d.unsignedvelocity.utils.ClientVersionUtil;
-import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 
-import javax.crypto.Cipher;
 import java.security.PublicKey;
 
 import static io.github._4drian3d.unsignedvelocity.listener.packet.login.EncryptionRequestListener.serverEncryptionDataCache;
@@ -55,43 +53,13 @@ public final class EncryptionResponseListener extends PacketListenerAbstract imp
         if (packet.getSaltSignature().isPresent() && serverEncryptionDataCache.containsKey(user)) {
             PublicKey serverPublicKey = serverEncryptionDataCache.get(user).publicKey();
             byte[] serverVerifyToken = serverEncryptionDataCache.get(user).verifyToken();
-            byte[] newEncryptedVerifyToken = encryptVerifyToken(serverPublicKey, serverVerifyToken);
+            byte[] newEncryptedVerifyToken = MinecraftEncryptionUtil.encryptRSA(serverPublicKey, serverVerifyToken);
 
-            replaceSaltSignatureWithVerifyToken(packet, newEncryptedVerifyToken);
+            packet.setSaltSignature(null);
+            packet.setEncryptedVerifyToken(newEncryptedVerifyToken);
         }
 
         // Remove the user from the user encryption data cache
         serverEncryptionDataCache.remove(user);
-
-        // This has to be set to false because the packet re-encoding disconnects the user by some reason
-        event.markForReEncode(false);
-    }
-
-    private byte[] encryptVerifyToken(PublicKey publicKey, byte[] verifyToken) {
-        byte[] encryptedVerifyToken = null;
-        try {
-            Cipher cipher = Cipher.getInstance(publicKey.getAlgorithm());
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            encryptedVerifyToken = cipher.doFinal(verifyToken);
-        } catch (Exception e) {
-            ComponentLogger logger = plugin.getLogger();
-            logger.error("An error occurred while trying to encrypt the Verify Token for ENCRYPTION_RESPONSE packet.", e);
-        }
-        return encryptedVerifyToken;
-    }
-
-    private void replaceSaltSignatureWithVerifyToken(WrapperLoginClientEncryptionResponse packet, byte[] token) {
-        // This would be easier to do with the setters declared within the PacketWrapper,
-        // but I can't use them because the packet re-encoding disconnects the user
-        byte[] encryptedSharedSecret = packet.getEncryptedSharedSecret();
-        Object buf = packet.getBuffer();
-
-        ByteBufHelper.readerIndex(buf, 1);
-        ByteBufHelper.writerIndex(buf, 1);
-
-        packet.writeByteArray(encryptedSharedSecret);
-        packet.writeBoolean(true);
-        packet.writeByteArray(token);
-        packet.read();
     }
 }
