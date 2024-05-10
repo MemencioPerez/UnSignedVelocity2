@@ -14,10 +14,8 @@ import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.LoadableEventListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.command.CommandListener;
+import io.github._4drian3d.unsignedvelocity.listener.packet.login.LoginListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.data.ServerDataListener;
-import io.github._4drian3d.unsignedvelocity.listener.packet.login.EncryptionRequestListener;
-import io.github._4drian3d.unsignedvelocity.listener.packet.login.EncryptionResponseListener;
-import io.github._4drian3d.unsignedvelocity.listener.packet.login.LoginStartListener;
 import io.github._4drian3d.unsignedvelocity.utils.Constants;
 import io.github.retrooper.packetevents.velocity.factory.VelocityPacketEventsBuilder;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
@@ -66,9 +64,7 @@ public final class UnSignedVelocity {
         PacketEvents.getAPI().load();
 
         Stream.of(
-            LoginStartListener.class,
-            EncryptionRequestListener.class,
-            EncryptionResponseListener.class,
+            LoginListener.class,
             CommandListener.class,
             ChatListener.class,
             ServerDataListener.class
@@ -88,10 +84,6 @@ public final class UnSignedVelocity {
                 configuration.applyChatMessages());
         logger.info(miniMessage().deserialize(
                 "<#6892bd>Secure Chat Data: <aqua>{}"), configuration.sendSecureChatData());
-    }
-
-    public ComponentLogger getLogger() {
-        return logger;
     }
 
     public Configuration getConfiguration() {
