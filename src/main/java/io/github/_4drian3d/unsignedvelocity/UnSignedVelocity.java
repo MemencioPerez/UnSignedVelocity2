@@ -10,6 +10,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.proxy.VelocityServer;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.LoadableEventListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatListener;
@@ -55,6 +56,14 @@ public final class UnSignedVelocity {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
+        boolean forceKeyAuthentication = ((VelocityServer) server).getConfiguration().isForceKeyAuthentication();
+        if (forceKeyAuthentication) {
+            logger.error("ERROR: The 'force-key-authentication' option in the Velocity configuration file (velocity.toml) is set to 'true'.");
+            logger.error("UnSignedVelocity requires that option to be set to 'false', so the plugin will not load.");
+            logger.error("If you want to use UnSignedVelocity, set 'force-key-authentication' to 'false' in Velocity settings and restart the proxy.");
+            return;
+        }
+        
         factory.make(this, 17514);
 
         try {
