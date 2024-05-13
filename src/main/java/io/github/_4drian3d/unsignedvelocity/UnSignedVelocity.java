@@ -42,21 +42,27 @@ public final class UnSignedVelocity {
     private final Path dataDirectory;
     private final Metrics.Factory factory;
     private final ComponentLogger logger;
-    private final Configuration configuration;
+    private Configuration configuration;
 
     @Inject
-    public UnSignedVelocity(ProxyServer server, Injector injector, @DataDirectory Path dataDirectory, Metrics.Factory factory, ComponentLogger logger) throws IOException {
+    public UnSignedVelocity(ProxyServer server, Injector injector, @DataDirectory Path dataDirectory, Metrics.Factory factory, ComponentLogger logger) {
         this.server = server;
         this.injector = injector;
         this.dataDirectory = dataDirectory;
         this.factory = factory;
         this.logger = logger;
-        this.configuration = Configuration.loadConfig(dataDirectory);
     }
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
         factory.make(this, 17514);
+
+        try {
+            configuration = Configuration.loadConfig(dataDirectory);
+        } catch (IOException e) {
+            logger.error("Cannot load configuration", e);
+            return;
+        }
 
         PluginContainer pluginContainer = server.getPluginManager().ensurePluginContainer(this);
         PacketEvents.setAPI(VelocityPacketEventsBuilder.build(server, pluginContainer, logger, dataDirectory));
