@@ -16,6 +16,7 @@ import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.command.CommandListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.login.LoginListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.data.ServerDataListener;
+import io.github._4drian3d.unsignedvelocity.listener.packet.status.ServerResponseListener;
 import io.github._4drian3d.unsignedvelocity.utils.Constants;
 import io.github.retrooper.packetevents.velocity.factory.VelocityPacketEventsBuilder;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
@@ -67,7 +68,8 @@ public final class UnSignedVelocity {
             LoginListener.class,
             CommandListener.class,
             ChatListener.class,
-            ServerDataListener.class
+            ServerDataListener.class,
+            ServerResponseListener.class
         ).map(injector::getInstance)
         .filter(LoadableEventListener::canBeLoaded)
         .forEach(listener -> listener.register(this));
