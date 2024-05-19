@@ -100,7 +100,7 @@ public final class UnSignedVelocity {
                 configuration.removeSignedCommandInformation(),
                 configuration.applyChatMessages());
         logger.info(miniMessage().deserialize(
-                "<#6892bd>Secure Chat Data: <aqua>{}"), configuration.sendSecureChatData());
+                "<#6892bd>Secure Chat Data: <aqua>{} <dark_gray>|</dark_gray> <#6892bd>Safe Server Status: <aqua>{}"), configuration.sendSecureChatData(), configuration.sendSafeServerStatus());
     }
 
     public Configuration getConfiguration() {
