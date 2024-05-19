@@ -12,7 +12,7 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.proxy.VelocityServer;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
-import io.github._4drian3d.unsignedvelocity.listener.LoadableEventListener;
+import io.github._4drian3d.unsignedvelocity.listener.LoadablePacketListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.command.CommandListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.login.LoginListener;
@@ -86,8 +86,8 @@ public final class UnSignedVelocity {
             ServerDataListener.class,
             ServerResponseListener.class
         ).map(injector::getInstance)
-        .filter(LoadableEventListener::canBeLoaded)
-        .forEach(listener -> listener.register(this));
+        .filter(LoadablePacketListener::canBeLoaded)
+        .forEach(LoadablePacketListener::register);
 
         PacketEvents.getAPI().init();
 

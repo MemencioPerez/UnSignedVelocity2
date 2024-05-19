@@ -1,6 +1,5 @@
 package io.github._4drian3d.unsignedvelocity.listener.packet.login;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
@@ -13,13 +12,13 @@ import com.github.retrooper.packetevents.wrapper.login.client.WrapperLoginClient
 import com.github.retrooper.packetevents.wrapper.login.server.WrapperLoginServerEncryptionRequest;
 import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.listener.LoadableEventListener;
+import io.github._4drian3d.unsignedvelocity.listener.LoadablePacketListener;
 import io.github._4drian3d.unsignedvelocity.utils.ClientVersionUtil;
 
 import java.security.PublicKey;
 import java.util.WeakHashMap;
 
-public final class LoginListener extends PacketListenerAbstract implements LoadableEventListener {
+public final class LoginListener extends PacketListenerAbstract implements LoadablePacketListener {
     private final UnSignedVelocity plugin;
     public static final WeakHashMap<User, byte[]> SERVER_ENCRYPTED_VERIFY_TOKENS_CACHE = new WeakHashMap<>();
 
@@ -28,9 +27,6 @@ public final class LoginListener extends PacketListenerAbstract implements Loada
         super(PacketListenerPriority.LOWEST);
         this.plugin = plugin;
     }
-
-    @Override
-    public void register(UnSignedVelocity plugin) { PacketEvents.getAPI().getEventManager().registerListener(new LoginListener(plugin)); }
 
     @Override
     public boolean canBeLoaded() {

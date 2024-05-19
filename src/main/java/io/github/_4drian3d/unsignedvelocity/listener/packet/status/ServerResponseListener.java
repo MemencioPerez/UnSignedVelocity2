@@ -1,6 +1,5 @@
 package io.github._4drian3d.unsignedvelocity.listener.packet.status;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
@@ -11,9 +10,9 @@ import com.github.retrooper.packetevents.wrapper.status.server.WrapperStatusServ
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.listener.LoadableEventListener;
+import io.github._4drian3d.unsignedvelocity.listener.LoadablePacketListener;
 
-public final class ServerResponseListener extends PacketListenerAbstract implements LoadableEventListener {
+public final class ServerResponseListener extends PacketListenerAbstract implements LoadablePacketListener {
     private final UnSignedVelocity plugin;
 
     @Inject
@@ -21,9 +20,6 @@ public final class ServerResponseListener extends PacketListenerAbstract impleme
         super(PacketListenerPriority.LOWEST);
         this.plugin = plugin;
     }
-
-    @Override
-    public void register(UnSignedVelocity plugin) { PacketEvents.getAPI().getEventManager().registerListener(new ServerResponseListener(plugin)); }
 
     @Override
     public boolean canBeLoaded() {

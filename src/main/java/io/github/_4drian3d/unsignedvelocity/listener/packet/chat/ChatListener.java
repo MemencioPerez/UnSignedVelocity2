@@ -1,6 +1,5 @@
 package io.github._4drian3d.unsignedvelocity.listener.packet.chat;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
@@ -11,12 +10,12 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCh
 import com.google.inject.Inject;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.listener.LoadableEventListener;
+import io.github._4drian3d.unsignedvelocity.listener.LoadablePacketListener;
 import io.github._4drian3d.unsignedvelocity.utils.ConnectionUtil;
 
 import java.time.Instant;
 
-public final class ChatListener extends PacketListenerAbstract implements LoadableEventListener {
+public final class ChatListener extends PacketListenerAbstract implements LoadablePacketListener {
     private final UnSignedVelocity plugin;
 
     @Inject
@@ -24,9 +23,6 @@ public final class ChatListener extends PacketListenerAbstract implements Loadab
         super(PacketListenerPriority.LOWEST);
         this.plugin = plugin;
     }
-
-    @Override
-    public void register(UnSignedVelocity plugin) { PacketEvents.getAPI().getEventManager().registerListener(new ChatListener(plugin)); }
 
     @Override
     public boolean canBeLoaded() {
