@@ -66,7 +66,7 @@ public final class UnSignedVelocity {
             logger.error("If you want to use UnSignedVelocity, set 'force-key-authentication' to 'false' in Velocity settings and restart the proxy.");
             return;
         }
-        
+
         factory.make(this, 17514);
 
         try {
@@ -83,17 +83,17 @@ public final class UnSignedVelocity {
         PacketEvents.getAPI().load();
 
         Stream.of(
-            LoginListener.class,
-            CommandListener.class,
-            ClientChatListener.class,
-            ServerChatListener.class,
-            ChatHeaderListener.class,
-            ChatSessionListener.class,
-            ServerDataListener.class,
-            ServerResponseListener.class
-        ).map(injector::getInstance)
-        .filter(LoadablePacketListener::canBeLoaded)
-        .forEach(LoadablePacketListener::register);
+                        LoginListener.class,
+                        CommandListener.class,
+                        ClientChatListener.class,
+                        ServerChatListener.class,
+                        ChatHeaderListener.class,
+                        ChatSessionListener.class,
+                        ServerDataListener.class,
+                        ServerResponseListener.class
+                ).map(injector::getInstance)
+                .filter(LoadablePacketListener::canBeLoaded)
+                .forEach(LoadablePacketListener::register);
 
         PacketEvents.getAPI().init();
 
@@ -106,15 +106,15 @@ public final class UnSignedVelocity {
                 configuration.removeSignedCommandInformation(),
                 configuration.applyChatMessages());
         logger.info(miniMessage().deserialize(
-                        "<#6892bd>Convert Player Chat Messages to System Chat Messages: <aqua>{}</aqua>"), configuration.convertPlayerChatToSystemChat(),
-                configuration.blockChatHeaderPackets(),
-                configuration.blockChatSessionPackets());
+                "<#6892bd>Convert Player Chat Messages to System Chat Messages: <aqua>{}</aqua>"), configuration.convertPlayerChatToSystemChat());
         logger.info(miniMessage().deserialize(
                         "<#6892bd>Block <dark_gray>|</dark_gray> <#6892bd>Chat Header Packets: <aqua>{}</aqua> <dark_gray>|</dark_gray> <#6892bd>Chat Session Packets: <aqua>{}</aqua>"),
                 configuration.blockChatHeaderPackets(),
                 configuration.blockChatSessionPackets());
         logger.info(miniMessage().deserialize(
-                "<#6892bd>Secure Chat Data: <aqua>{} <dark_gray>|</dark_gray> <#6892bd>Safe Server Status: <aqua>{}"), configuration.sendSecureChatData(), configuration.sendSafeServerStatus());
+                        "<#6892bd>Secure Chat Data: <aqua>{} <dark_gray>|</dark_gray> <#6892bd>Safe Server Status: <aqua>{}"),
+                configuration.sendSecureChatData(),
+                configuration.sendSafeServerStatus());
     }
 
     public Configuration getConfiguration() {
