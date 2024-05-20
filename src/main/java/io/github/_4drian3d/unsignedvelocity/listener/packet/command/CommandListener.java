@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.github.retrooper.packetevents.util.crypto.MessageSignData;
 import com.github.retrooper.packetevents.util.crypto.SaltSignature;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientChatCommand;
@@ -31,15 +32,15 @@ public final class CommandListener extends PacketListenerAbstract implements Loa
 
     @Override
     public void onPacketReceive(final PacketReceiveEvent event) {
-        if (event.getPacketType() != PacketType.Play.Client.CHAT_COMMAND) {
-            return;
-        }
-        final ConnectedPlayer player = (ConnectedPlayer) event.getPlayer();
-        if (ConnectionUtil.hasDisconnected(player)) return;
+        final PacketTypeCommon packetType = event.getPacketType();
+        if (packetType == PacketType.Play.Client.CHAT_COMMAND) {
+            final ConnectedPlayer player = (ConnectedPlayer) event.getPlayer();
+            if (ConnectionUtil.hasDisconnected(player)) return;
 
-        final WrapperPlayClientChatCommand packet = new WrapperPlayClientChatCommand(event);
-        MessageSignData packetMessageSignData = packet.getMessageSignData();
-        Instant packetTimestamp = packetMessageSignData.getTimestamp();
-        packet.setMessageSignData(new MessageSignData(new SaltSignature(0L, new byte[0]), packetTimestamp)); // Setting the message salt long to 0L and signature byte array length to zero to disable chat signing
+            final WrapperPlayClientChatCommand packet = new WrapperPlayClientChatCommand(event);
+            MessageSignData packetMessageSignData = packet.getMessageSignData();
+            Instant packetTimestamp = packetMessageSignData.getTimestamp();
+            packet.setMessageSignData(new MessageSignData(new SaltSignature(0L, new byte[0]), packetTimestamp));
+        }
     }
 }

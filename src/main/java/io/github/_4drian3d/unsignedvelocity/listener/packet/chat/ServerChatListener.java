@@ -41,6 +41,7 @@ public final class ServerChatListener extends PacketListenerAbstract implements 
             if (event.getUser().getClientVersion().isOlderThan(ClientVersion.V_1_19)) {
                 return;
             }
+
             Component messageContent = getComponentFromChatPacket(event);
             final WrapperPlayServerSystemChatMessage newPacket = new WrapperPlayServerSystemChatMessage(false, messageContent);
             event.getUser().sendPacketSilently(newPacket);

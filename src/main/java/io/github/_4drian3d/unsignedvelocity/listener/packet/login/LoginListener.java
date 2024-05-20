@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.util.crypto.MinecraftEncryptionUtil;
 import com.github.retrooper.packetevents.wrapper.login.client.WrapperLoginClientEncryptionResponse;
@@ -36,7 +37,8 @@ public final class LoginListener extends PacketListenerAbstract implements Loada
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
         final User user = event.getUser();
-        if (event.getPacketType() == PacketType.Login.Client.LOGIN_START) {
+        final PacketTypeCommon packetType = event.getPacketType();
+        if (packetType == PacketType.Login.Client.LOGIN_START) {
             if (ClientVersionUtil.doesNotEnforceSignedChatOnLogin(user)) {
                 return;
             }
@@ -47,7 +49,7 @@ public final class LoginListener extends PacketListenerAbstract implements Loada
                 return;
             }
             packet.setSignatureData(null);
-        } else if (event.getPacketType() == PacketType.Login.Client.ENCRYPTION_RESPONSE) {
+        } else if (packetType == PacketType.Login.Client.ENCRYPTION_RESPONSE) {
             if (ClientVersionUtil.doesNotEnforceSignedChatOnLogin(user)) {
                 return;
             }
@@ -66,19 +68,17 @@ public final class LoginListener extends PacketListenerAbstract implements Loada
 
     @Override
     public void onPacketSend(PacketSendEvent event) {
-        if (event.getPacketType() != PacketType.Login.Server.ENCRYPTION_REQUEST) {
-            return;
-        }
         final User user = event.getUser();
-        if (ClientVersionUtil.doesNotEnforceSignedChatOnLogin(user)) {
-            return;
+        final PacketTypeCommon packetType = event.getPacketType();
+        if (packetType == PacketType.Login.Server.ENCRYPTION_REQUEST) {
+            if (ClientVersionUtil.doesNotEnforceSignedChatOnLogin(user)) {
+                return;
+            }
+            WrapperLoginServerEncryptionRequest packet = new WrapperLoginServerEncryptionRequest(event);
+            PublicKey serverPublicKey = packet.getPublicKey();
+            byte[] serverVerifyToken = packet.getVerifyToken();
+            byte[] encryptedVerifyToken = MinecraftEncryptionUtil.encryptRSA(serverPublicKey, serverVerifyToken);
+            SERVER_ENCRYPTED_VERIFY_TOKENS_CACHE.put(user, encryptedVerifyToken);
         }
-
-        WrapperLoginServerEncryptionRequest packet = new WrapperLoginServerEncryptionRequest(event);
-
-        PublicKey serverPublicKey = packet.getPublicKey();
-        byte[] serverVerifyToken = packet.getVerifyToken();
-        byte[] encryptedVerifyToken = MinecraftEncryptionUtil.encryptRSA(serverPublicKey, serverVerifyToken);
-        SERVER_ENCRYPTED_VERIFY_TOKENS_CACHE.put(user, encryptedVerifyToken);
     }
 }
