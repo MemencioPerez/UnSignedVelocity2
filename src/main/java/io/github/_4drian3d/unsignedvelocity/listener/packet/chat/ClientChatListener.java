@@ -31,7 +31,6 @@ public final class ClientChatListener extends PacketListenerAbstract implements 
 
     @Override
     public void onPacketReceive(final PacketReceiveEvent event) {
-        // If the packet isn't a Server Chat Packet, do nothing
         if (event.getPacketType() != PacketType.Play.Client.CHAT_MESSAGE) {
             return;
         }
@@ -41,7 +40,6 @@ public final class ClientChatListener extends PacketListenerAbstract implements 
 
         final WrapperPlayClientChatMessage packet = new WrapperPlayClientChatMessage(event);
 
-        // If the packet doesn't have Message Sign Data, do nothing
         if (packet.getMessageSignData().isEmpty()) {
             return;
         }

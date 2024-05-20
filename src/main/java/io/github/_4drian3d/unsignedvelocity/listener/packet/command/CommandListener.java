@@ -31,7 +31,6 @@ public final class CommandListener extends PacketListenerAbstract implements Loa
 
     @Override
     public void onPacketReceive(final PacketReceiveEvent event) {
-        // If the packet isn't a Server Command Packet, do nothing
         if (event.getPacketType() != PacketType.Play.Client.CHAT_COMMAND) {
             return;
         }
