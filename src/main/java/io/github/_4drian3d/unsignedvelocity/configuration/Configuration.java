@@ -15,9 +15,16 @@ public interface Configuration {
 
     boolean applyChatMessages();
 
+    boolean convertPlayerChatToSystemChat();
+
+    boolean blockChatHeaderPackets();
+
+    boolean blockChatSessionPackets();
+
     boolean sendSecureChatData();
 
     boolean sendSafeServerStatus();
+
 
     static Configuration loadConfig(final Path path) throws IOException {
         final Path configPath = loadFiles(path);
@@ -33,6 +40,12 @@ public interface Configuration {
                 .getBoolean(false);
         final boolean applyChatMessages = loaded.node("apply-chat-messages")
                 .getBoolean(true);
+        final boolean convertPlayerChatToSystemChat = loaded.node("convert-player-chat-to-system-chat")
+                .getBoolean(false);
+        final boolean blockChatHeaderPackets = loaded.node("block-chat-header-packets")
+                .getBoolean(false);
+        final boolean blockChatSessionPackets = loaded.node("block-chat-session-packets")
+                .getBoolean(false);
         final boolean sendSecureChatData = loaded.node("send-secure-chat-data")
                 .getBoolean(false);
         final boolean sendSafeServerStatus = loaded.node("send-safe-server-status")
@@ -52,6 +65,21 @@ public interface Configuration {
             @Override
             public boolean applyChatMessages() {
                 return applyChatMessages;
+            }
+
+            @Override
+            public boolean convertPlayerChatToSystemChat() {
+                return convertPlayerChatToSystemChat;
+            }
+
+            @Override
+            public boolean blockChatHeaderPackets() {
+                return blockChatHeaderPackets;
+            }
+
+            @Override
+            public boolean blockChatSessionPackets() {
+                return blockChatSessionPackets;
             }
 
             @Override

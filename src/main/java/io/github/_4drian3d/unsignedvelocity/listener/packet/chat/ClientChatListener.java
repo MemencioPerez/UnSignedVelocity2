@@ -15,11 +15,11 @@ import io.github._4drian3d.unsignedvelocity.utils.ConnectionUtil;
 
 import java.time.Instant;
 
-public final class ChatListener extends PacketListenerAbstract implements LoadablePacketListener {
+public final class ClientChatListener extends PacketListenerAbstract implements LoadablePacketListener {
     private final UnSignedVelocity plugin;
 
     @Inject
-    public ChatListener(UnSignedVelocity plugin) {
+    public ClientChatListener(UnSignedVelocity plugin) {
         super(PacketListenerPriority.LOWEST);
         this.plugin = plugin;
     }

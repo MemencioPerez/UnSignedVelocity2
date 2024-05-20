@@ -13,7 +13,10 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.proxy.VelocityServer;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.LoadablePacketListener;
-import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatListener;
+import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatHeaderListener;
+import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatSessionListener;
+import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ClientChatListener;
+import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ServerChatListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.command.CommandListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.login.LoginListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.data.ServerDataListener;
@@ -82,7 +85,10 @@ public final class UnSignedVelocity {
         Stream.of(
             LoginListener.class,
             CommandListener.class,
-            ChatListener.class,
+            ClientChatListener.class,
+            ServerChatListener.class,
+            ChatHeaderListener.class,
+            ChatSessionListener.class,
             ServerDataListener.class,
             ServerResponseListener.class
         ).map(injector::getInstance)
@@ -99,6 +105,14 @@ public final class UnSignedVelocity {
                         "<#6892bd>UnSigned <dark_gray>|</dark_gray> Commands: <aqua>{}</aqua> <dark_gray>|</dark_gray> Chat: <aqua>{}"),
                 configuration.removeSignedCommandInformation(),
                 configuration.applyChatMessages());
+        logger.info(miniMessage().deserialize(
+                        "<#6892bd>Convert Player Chat Messages to System Chat Messages: <aqua>{}</aqua>"), configuration.convertPlayerChatToSystemChat(),
+                configuration.blockChatHeaderPackets(),
+                configuration.blockChatSessionPackets());
+        logger.info(miniMessage().deserialize(
+                        "<#6892bd>Block <dark_gray>|</dark_gray> <#6892bd>Chat Header Packets: <aqua>{}</aqua> <dark_gray>|</dark_gray> <#6892bd>Chat Session Packets: <aqua>{}</aqua>"),
+                configuration.blockChatHeaderPackets(),
+                configuration.blockChatSessionPackets());
         logger.info(miniMessage().deserialize(
                 "<#6892bd>Secure Chat Data: <aqua>{} <dark_gray>|</dark_gray> <#6892bd>Safe Server Status: <aqua>{}"), configuration.sendSecureChatData(), configuration.sendSafeServerStatus());
     }
