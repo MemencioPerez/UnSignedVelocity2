@@ -30,6 +30,7 @@ public final class CommandListener extends PacketListenerAbstract implements Loa
 
     @Override
     public void onPacketReceive(final PacketReceiveEvent event) {
+        if (event.isCancelled()) return;
         final PacketTypeCommon packetType = event.getPacketType();
         if (packetType == PacketType.Play.Client.CHAT_COMMAND) {
             final WrapperPlayClientChatCommand packet = new WrapperPlayClientChatCommand(event);

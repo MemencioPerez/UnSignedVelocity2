@@ -29,6 +29,7 @@ public final class ServerResponseListener extends PacketListenerAbstract impleme
 
     @Override
     public void onPacketSend(final PacketSendEvent event) {
+        if (event.isCancelled()) return;
         final User user = event.getUser();
         final PacketTypeCommon packetType = event.getPacketType();
         if (packetType == PacketType.Status.Server.RESPONSE) {

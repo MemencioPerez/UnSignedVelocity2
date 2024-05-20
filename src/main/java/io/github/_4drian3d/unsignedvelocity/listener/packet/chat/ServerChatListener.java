@@ -36,6 +36,7 @@ public final class ServerChatListener extends PacketListenerAbstract implements 
 
     @Override
     public void onPacketSend(final PacketSendEvent event) {
+        if (event.isCancelled()) return;
         final PacketTypeCommon packetType = event.getPacketType();
         if (packetType == PacketType.Play.Server.CHAT_MESSAGE) {
             if (event.getUser().getClientVersion().isOlderThan(ClientVersion.V_1_19)) {

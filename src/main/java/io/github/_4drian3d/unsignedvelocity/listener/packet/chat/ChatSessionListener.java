@@ -25,6 +25,7 @@ public final class ChatSessionListener extends PacketListenerAbstract implements
 
     @Override
     public void onPacketReceive(final PacketReceiveEvent event) {
+        if (event.isCancelled()) return;
         final PacketTypeCommon packetType = event.getPacketType();
         if (packetType == PacketType.Play.Client.CHAT_SESSION_UPDATE) {
             event.setCancelled(true);

@@ -68,6 +68,7 @@ public final class LoginListener extends PacketListenerAbstract implements Loada
 
     @Override
     public void onPacketSend(PacketSendEvent event) {
+        if (event.isCancelled()) return;
         final User user = event.getUser();
         final PacketTypeCommon packetType = event.getPacketType();
         if (packetType == PacketType.Login.Server.ENCRYPTION_REQUEST) {

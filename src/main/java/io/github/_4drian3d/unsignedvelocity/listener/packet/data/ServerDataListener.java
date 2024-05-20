@@ -29,6 +29,7 @@ public final class ServerDataListener extends PacketListenerAbstract implements 
 
     @Override
     public void onPacketSend(final PacketSendEvent event) {
+        if (event.isCancelled()) return;
         final User user = event.getUser();
         final PacketTypeCommon packetType = event.getPacketType();
         if (packetType == PacketType.Play.Server.SERVER_DATA) {

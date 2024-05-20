@@ -83,17 +83,17 @@ public final class UnSignedVelocity {
         PacketEvents.getAPI().load();
 
         Stream.of(
-                        LoginListener.class,
-                        CommandListener.class,
-                        ClientChatListener.class,
-                        ServerChatListener.class,
-                        ChatHeaderListener.class,
-                        ChatSessionListener.class,
-                        ServerDataListener.class,
-                        ServerResponseListener.class
-                ).map(injector::getInstance)
-                .filter(LoadablePacketListener::canBeLoaded)
-                .forEach(LoadablePacketListener::register);
+            LoginListener.class,
+            CommandListener.class,
+            ClientChatListener.class,
+            ServerChatListener.class,
+            ChatHeaderListener.class,
+            ChatSessionListener.class,
+            ServerDataListener.class,
+            ServerResponseListener.class
+        ).map(injector::getInstance)
+        .filter(LoadablePacketListener::canBeLoaded)
+        .forEach(LoadablePacketListener::register);
 
         PacketEvents.getAPI().init();
 
