@@ -2,7 +2,7 @@ package io.github._4drian3d.unsignedvelocity.listener.packet.chat;
 
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
-import com.github.retrooper.packetevents.event.PacketReceiveEvent;
+import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.google.inject.Inject;
@@ -24,10 +24,10 @@ public final class ChatHeaderListener extends PacketListenerAbstract implements 
     }
 
     @Override
-    public void onPacketReceive(final PacketReceiveEvent event) {
+    public void onPacketSend(final PacketSendEvent event) {
         if (event.isCancelled()) return;
         final PacketTypeCommon packetType = event.getPacketType();
-        if (packetType == PacketType.Play.Client.CHAT_SESSION_UPDATE) {
+        if (packetType == PacketType.Play.Server.PLAYER_CHAT_HEADER) {
             event.setCancelled(true);
         }
     }
