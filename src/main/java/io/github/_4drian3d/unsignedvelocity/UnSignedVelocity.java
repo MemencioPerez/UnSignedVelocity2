@@ -100,7 +100,7 @@ public final class UnSignedVelocity {
         logger.info(miniMessage().deserialize(
                 "<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>has been successfully loaded"));
         logger.info(miniMessage().deserialize(
-                "<#6892bd>Remove Signed Key: <aqua>{}"), configuration.removeSignedKey());
+                "<#6892bd>Remove Signed Key: <aqua>{}"), configuration.removeSignedKeyOnJoin());
         logger.info(miniMessage().deserialize(
                         "<#6892bd>UnSigned <dark_gray>|</dark_gray> Commands: <aqua>{}</aqua> <dark_gray>|</dark_gray> Chat: <aqua>{}"),
                 configuration.removeSignedCommandInformation(),

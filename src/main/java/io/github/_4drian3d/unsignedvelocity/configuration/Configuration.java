@@ -2,31 +2,32 @@ package io.github._4drian3d.unsignedvelocity.configuration;
 
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public interface Configuration {
-    boolean removeSignedKey();
+@ConfigSerializable
+public record Configuration(
+    boolean removeSignedKeyOnJoin,
 
-    boolean removeSignedCommandInformation();
+    boolean removeSignedCommandInformation,
 
-    boolean applyChatMessages();
+    boolean applyChatMessages,
 
-    boolean convertPlayerChatToSystemChat();
+    boolean convertPlayerChatToSystemChat,
 
-    boolean blockChatHeaderPackets();
+    boolean blockChatHeaderPackets,
 
-    boolean blockChatSessionPackets();
+    boolean blockChatSessionPackets,
 
-    boolean sendSecureChatData();
+    boolean sendSecureChatData,
 
-    boolean sendSafeServerStatus();
+    boolean sendSafeServerStatus) {
 
-
-    static Configuration loadConfig(final Path path) throws IOException {
+    public static Configuration loadConfig(final Path path) throws IOException {
         final Path configPath = loadFiles(path);
         final HoconConfigurationLoader loader = HoconConfigurationLoader.builder()
                 .path(configPath)
@@ -34,64 +35,7 @@ public interface Configuration {
 
         final CommentedConfigurationNode loaded = loader.load();
 
-        final boolean removeSignedKey = loaded.node("remove-signed-key-on-join")
-                .getBoolean(false);
-        final boolean removeSigneCommandInformation = loaded.node("remove-signed-command-information")
-                .getBoolean(false);
-        final boolean applyChatMessages = loaded.node("apply-chat-messages")
-                .getBoolean(true);
-        final boolean convertPlayerChatToSystemChat = loaded.node("convert-player-chat-to-system-chat")
-                .getBoolean(false);
-        final boolean blockChatHeaderPackets = loaded.node("block-chat-header-packets")
-                .getBoolean(false);
-        final boolean blockChatSessionPackets = loaded.node("block-chat-session-packets")
-                .getBoolean(false);
-        final boolean sendSecureChatData = loaded.node("send-secure-chat-data")
-                .getBoolean(false);
-        final boolean sendSafeServerStatus = loaded.node("send-safe-server-status")
-                .getBoolean(false);
-
-        return new Configuration() {
-            @Override
-            public boolean removeSignedKey() {
-                return removeSignedKey;
-            }
-
-            @Override
-            public boolean removeSignedCommandInformation() {
-                return removeSigneCommandInformation;
-            }
-
-            @Override
-            public boolean applyChatMessages() {
-                return applyChatMessages;
-            }
-
-            @Override
-            public boolean convertPlayerChatToSystemChat() {
-                return convertPlayerChatToSystemChat;
-            }
-
-            @Override
-            public boolean blockChatHeaderPackets() {
-                return blockChatHeaderPackets;
-            }
-
-            @Override
-            public boolean blockChatSessionPackets() {
-                return blockChatSessionPackets;
-            }
-
-            @Override
-            public boolean sendSecureChatData() {
-                return sendSecureChatData;
-            }
-
-            @Override
-            public boolean sendSafeServerStatus() {
-                return sendSafeServerStatus;
-            }
-        };
+        return loaded.get(Configuration.class);
     }
 
     private static Path loadFiles(Path path) throws IOException {

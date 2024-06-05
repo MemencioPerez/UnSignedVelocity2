@@ -31,7 +31,7 @@ public final class LoginListener extends PacketListenerAbstract implements Loada
 
     @Override
     public boolean canBeLoaded() {
-        return plugin.getConfiguration().removeSignedKey();
+        return plugin.getConfiguration().removeSignedKeyOnJoin();
     }
 
     @Override
