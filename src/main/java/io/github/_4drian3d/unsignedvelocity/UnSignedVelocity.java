@@ -117,6 +117,10 @@ public final class UnSignedVelocity {
                 configuration.sendSafeServerStatus());
     }
 
+    public ProxyServer getServer() {
+        return server;
+    }
+
     public Configuration getConfiguration() {
         return configuration;
     }

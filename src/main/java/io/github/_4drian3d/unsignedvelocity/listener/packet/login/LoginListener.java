@@ -1,5 +1,7 @@
 package io.github._4drian3d.unsignedvelocity.listener.packet.login;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
@@ -12,21 +14,35 @@ import com.github.retrooper.packetevents.wrapper.login.client.WrapperLoginClient
 import com.github.retrooper.packetevents.wrapper.login.client.WrapperLoginClientLoginStart;
 import com.github.retrooper.packetevents.wrapper.login.server.WrapperLoginServerEncryptionRequest;
 import com.google.inject.Inject;
+import com.velocitypowered.api.proxy.config.ProxyConfig;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
 import io.github._4drian3d.unsignedvelocity.listener.LoadablePacketListener;
 import io.github._4drian3d.unsignedvelocity.utils.ClientVersionUtil;
 
 import java.security.PublicKey;
-import java.util.WeakHashMap;
+import java.util.concurrent.TimeUnit;
 
 public final class LoginListener extends PacketListenerAbstract implements LoadablePacketListener {
     private final UnSignedVelocity plugin;
-    public static final WeakHashMap<User, byte[]> SERVER_ENCRYPTED_VERIFY_TOKENS_CACHE = new WeakHashMap<>();
+    private final Cache<User, byte[]> cache;
 
     @Inject
     public LoginListener(UnSignedVelocity plugin) {
         super(PacketListenerPriority.LOWEST);
         this.plugin = plugin;
+        this.cache = setupCache();
+    }
+
+    private Cache<User, byte[]> setupCache() {
+        ProxyConfig proxyConfig = plugin.getServer().getConfiguration();
+
+        int connectTimeout = proxyConfig.getConnectTimeout();
+        int showMaxPlayers = proxyConfig.getShowMaxPlayers();
+
+        return Caffeine.newBuilder()
+                .expireAfterWrite(connectTimeout, TimeUnit.MILLISECONDS)
+                .maximumSize(showMaxPlayers)
+                .build();
     }
 
     @Override
@@ -56,13 +72,14 @@ public final class LoginListener extends PacketListenerAbstract implements Loada
 
             WrapperLoginClientEncryptionResponse packet = new WrapperLoginClientEncryptionResponse(event);
 
-            if (packet.getSaltSignature().isPresent() && SERVER_ENCRYPTED_VERIFY_TOKENS_CACHE.containsKey(user)) {
-                byte[] encryptedVerifyToken = SERVER_ENCRYPTED_VERIFY_TOKENS_CACHE.get(user);
+            boolean cacheContainsUser = cache.getIfPresent(user) != null;
+            if (packet.getSaltSignature().isPresent() && cacheContainsUser) {
+                byte[] encryptedVerifyToken = cache.getIfPresent(user);
 
                 packet.setSaltSignature(null);
                 packet.setEncryptedVerifyToken(encryptedVerifyToken);
             }
-            SERVER_ENCRYPTED_VERIFY_TOKENS_CACHE.remove(user);
+            cache.invalidate(user);
         }
     }
 
@@ -79,7 +96,7 @@ public final class LoginListener extends PacketListenerAbstract implements Loada
             PublicKey serverPublicKey = packet.getPublicKey();
             byte[] serverVerifyToken = packet.getVerifyToken();
             byte[] encryptedVerifyToken = MinecraftEncryptionUtil.encryptRSA(serverPublicKey, serverVerifyToken);
-            SERVER_ENCRYPTED_VERIFY_TOKENS_CACHE.put(user, encryptedVerifyToken);
+            cache.put(user, encryptedVerifyToken);
         }
     }
 }
