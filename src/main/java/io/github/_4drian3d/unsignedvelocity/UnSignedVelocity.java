@@ -78,8 +78,7 @@ public final class UnSignedVelocity {
 
         PluginContainer pluginContainer = server.getPluginManager().ensurePluginContainer(this);
         PacketEvents.setAPI(VelocityPacketEventsBuilder.build(server, pluginContainer, logger, dataDirectory));
-        PacketEvents.getAPI().getSettings().checkForUpdates(false)
-                .bStats(false);
+        PacketEvents.getAPI().getSettings().checkForUpdates(false);
         PacketEvents.getAPI().load();
 
         Stream.of(
