@@ -1,13 +1,11 @@
 package io.github._4drian3d.unsignedvelocity;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
-import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.proxy.VelocityServer;
@@ -22,7 +20,6 @@ import io.github._4drian3d.unsignedvelocity.listener.packet.login.LoginListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.data.ServerDataListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.status.ServerResponseListener;
 import io.github._4drian3d.unsignedvelocity.utils.Constants;
-import io.github.retrooper.packetevents.velocity.factory.VelocityPacketEventsBuilder;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bstats.velocity.Metrics;
 
@@ -76,11 +73,6 @@ public final class UnSignedVelocity {
             return;
         }
 
-        PluginContainer pluginContainer = server.getPluginManager().ensurePluginContainer(this);
-        PacketEvents.setAPI(VelocityPacketEventsBuilder.build(server, pluginContainer, logger, dataDirectory));
-        PacketEvents.getAPI().getSettings().checkForUpdates(false);
-        PacketEvents.getAPI().load();
-
         Stream.of(
             LoginListener.class,
             CommandListener.class,
@@ -93,8 +85,6 @@ public final class UnSignedVelocity {
         ).map(injector::getInstance)
         .filter(LoadablePacketListener::canBeLoaded)
         .forEach(LoadablePacketListener::register);
-
-        PacketEvents.getAPI().init();
 
         logger.info(miniMessage().deserialize(
                 "<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>has been successfully loaded"));
