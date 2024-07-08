@@ -5,10 +5,12 @@ plugins {
     alias(libs.plugins.shadow)
 }
 
+val packetEventsVersion = libs.versions.packetevents.get()
+
 repositories {
     maven("https://papermc.io/repo/repository/maven-public/")
     maven("https://repo.william278.net/velocity/")
-    maven("https://repo.codemc.io/repository/maven-snapshots/")
+    maven("https://repo.codemc.io/repository/maven-${ if (packetEventsVersion.contains("SNAPSHOT")) "snapshots" else "releases"}/")
 }
 
 dependencies {
@@ -47,7 +49,6 @@ tasks {
         minimize()
     }
     runVelocity {
-        val packetEventsVersion = libs.versions.packetevents.get()
         downloadPlugins {
             if (packetEventsVersion.contains("SNAPSHOT")) {
                 url("https://ci.codemc.io/job/retrooper/job/packetevents/lastSuccessfulBuild/artifact/velocity/build/libs/packetevents-velocity-$packetEventsVersion.jar")
