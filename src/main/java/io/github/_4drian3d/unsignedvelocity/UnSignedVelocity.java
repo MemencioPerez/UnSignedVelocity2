@@ -9,6 +9,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.proxy.VelocityServer;
+import com.velocitypowered.proxy.config.VelocityConfiguration;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.LoadablePacketListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatHeaderListener;
@@ -24,6 +25,8 @@ import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bstats.velocity.Metrics;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InaccessibleObjectException;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
@@ -56,12 +59,24 @@ public final class UnSignedVelocity {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
-        boolean forceKeyAuthentication = ((VelocityServer) server).getConfiguration().isForceKeyAuthentication();
-        if (forceKeyAuthentication) {
-            logger.error("ERROR: The 'force-key-authentication' option in the Velocity configuration file (velocity.toml) is set to 'true'.");
-            logger.error("UnSignedVelocity requires that option to be set to 'false', so the plugin will not load.");
-            logger.error("If you want to use UnSignedVelocity, set 'force-key-authentication' to 'false' in Velocity settings and restart the proxy.");
-            return;
+        try {
+            VelocityConfiguration velocityConfiguration = ((VelocityServer) server).getConfiguration();
+            Field forceKeyAuthenticationField = velocityConfiguration.getClass().getDeclaredField("forceKeyAuthentication");
+            forceKeyAuthenticationField.setAccessible(true);
+            boolean forceKeyAuthenticationValue = (boolean) forceKeyAuthenticationField.get(velocityConfiguration);
+            if (forceKeyAuthenticationValue) {
+                logger.warn("WARN: The 'force-key-authentication' option in the Velocity configuration file (velocity.toml) is set to 'true'.");
+                logger.warn("UnSignedVelocity requires that option to be set to 'false', so it will try to set it to 'true' forcefully at runtime.");
+                logger.warn("If you want to hide this warning, set 'force-key-authentication' to 'false' in Velocity settings and restart the proxy.");
+                logger.warn("Trying to set 'force-key-authentication' to false...");
+                forceKeyAuthenticationField.setBoolean(velocityConfiguration, false);
+                forceKeyAuthenticationField.setAccessible(false);
+                logger.warn("The 'force-key-authentication' field was found and set to false at runtime (so this doesn't modify velocity.toml file.");
+            }
+        } catch (NoSuchFieldException e) {
+            logger.error("The plugin cannot find 'force-key-authentication' option field, 'remove-signed-key-on-join' option will not work. Contact the developer of this plugin.", e);
+        } catch (InaccessibleObjectException | SecurityException | IllegalAccessException | IllegalArgumentException | NullPointerException | ExceptionInInitializerError e ) {
+            logger.error("The plugin cannot access 'force-key-authentication' option field, 'remove-signed-key-on-join' option will not work. If setting 'force-key-authentication' to 'false' manually and restarting the proxy doesn't work, contact the developer of this plugin.", e);
         }
 
         factory.make(this, 17514);
