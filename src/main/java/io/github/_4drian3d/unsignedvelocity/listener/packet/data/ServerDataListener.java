@@ -38,6 +38,7 @@ public final class ServerDataListener extends PacketListenerAbstract implements 
                 if (!packet.isEnforceSecureChat()) {
                     packet.setEnforceSecureChat(true);
                 }
+                event.markForReEncode(true);
             }
         } else if (packetType == PacketType.Play.Server.JOIN_GAME) {
             if (user.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_20_5)) {
@@ -45,6 +46,7 @@ public final class ServerDataListener extends PacketListenerAbstract implements 
                 if (!packet.isEnforcesSecureChat()) {
                     packet.setEnforcesSecureChat(true);
                 }
+                event.markForReEncode(true);
             }
         }
     }

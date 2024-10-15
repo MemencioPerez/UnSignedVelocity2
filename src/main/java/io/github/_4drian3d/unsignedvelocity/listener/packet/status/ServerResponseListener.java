@@ -38,6 +38,7 @@ public final class ServerResponseListener extends PacketListenerAbstract impleme
                 JsonObject component = packet.getComponent();
                 component.addProperty("preventsChatReports", true);
                 packet.setComponent(component);
+                event.markForReEncode(true);
             }
         }
     }

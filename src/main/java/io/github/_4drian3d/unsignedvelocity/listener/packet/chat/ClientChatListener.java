@@ -40,6 +40,7 @@ public final class ClientChatListener extends PacketListenerAbstract implements 
             MessageSignData packetMessageSignData = packet.getMessageSignData().get();
             Instant packetTimestamp = packetMessageSignData.getTimestamp();
             packet.setMessageSignData(new MessageSignData(new SaltSignature(0L, new byte[0]), packetTimestamp));
+            event.markForReEncode(true);
         }
     }
 }

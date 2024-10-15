@@ -37,6 +37,7 @@ public final class CommandListener extends PacketListenerAbstract implements Loa
             MessageSignData packetMessageSignData = packet.getMessageSignData();
             Instant packetTimestamp = packetMessageSignData.getTimestamp();
             packet.setMessageSignData(new MessageSignData(new SaltSignature(0L, new byte[0]), packetTimestamp));
+            event.markForReEncode(true);
         }
     }
 }

@@ -65,6 +65,7 @@ public final class LoginListener extends PacketListenerAbstract implements Loada
                 return;
             }
             packet.setSignatureData(null);
+            event.markForReEncode(true);
         } else if (packetType == PacketType.Login.Client.ENCRYPTION_RESPONSE) {
             if (ClientVersionUtil.doesNotEnforceSignedChatOnLogin(user)) {
                 return;
@@ -80,6 +81,7 @@ public final class LoginListener extends PacketListenerAbstract implements Loada
                 packet.setEncryptedVerifyToken(encryptedVerifyToken);
             }
             cache.invalidate(user);
+            event.markForReEncode(true);
         }
     }
 
