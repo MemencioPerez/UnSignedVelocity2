@@ -71,7 +71,7 @@ public final class UnSignedVelocity {
                 logger.warn("Trying to set 'force-key-authentication' to false...");
                 forceKeyAuthenticationField.setBoolean(velocityConfiguration, false);
                 forceKeyAuthenticationField.setAccessible(false);
-                logger.warn("The 'force-key-authentication' field was found and set to false at runtime (so this doesn't modify velocity.toml file.");
+                logger.warn("The 'force-key-authentication' field was found and set to false at runtime (this doesn't modify velocity.toml file).");
             }
         } catch (NoSuchFieldException e) {
             logger.error("The plugin cannot find 'force-key-authentication' option field, 'remove-signed-key-on-join' option will not work. Contact the developer of this plugin.", e);
