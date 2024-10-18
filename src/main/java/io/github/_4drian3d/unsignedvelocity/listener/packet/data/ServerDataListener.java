@@ -1,58 +1,53 @@
 package io.github._4drian3d.unsignedvelocity.listener.packet.data;
 
+import com.github.retrooper.packetevents.event.PacketListenerAbstract;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
+import com.github.retrooper.packetevents.event.PacketSendEvent;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.protocol.player.User;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerJoinGame;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerServerData;
 import com.google.inject.Inject;
-import com.velocitypowered.api.event.EventManager;
-import com.velocitypowered.proxy.protocol.packet.ServerDataPacket;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
-import io.github._4drian3d.unsignedvelocity.listener.EventListener;
-import io.github._4drian3d.vpacketevents.api.event.PacketSendEvent;
+import io.github._4drian3d.unsignedvelocity.listener.LoadablePacketListener;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-
-public final class ServerDataListener implements EventListener {
-    private static final MethodHandle ENFORCED_SETTER;
-
-    static {
-        try {
-            final MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(ServerDataPacket.class, MethodHandles.lookup());
-            ENFORCED_SETTER = lookup.findSetter(ServerDataPacket.class, "secureChatEnforced", Boolean.TYPE);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+public final class ServerDataListener extends PacketListenerAbstract implements LoadablePacketListener {
+    private final UnSignedVelocity plugin;
 
     @Inject
-    private EventManager eventManager;
-    @Inject
-    private UnSignedVelocity plugin;
-    @Inject
-    private Configuration configuration;
-
-    @Override
-    public void register() {
-        eventManager.register(plugin, PacketSendEvent.class, this::onData);
-    }
-
-    private void onData(final PacketSendEvent event) {
-        if (!(event.getPacket() instanceof final ServerDataPacket serverData)) {
-            return;
-        }
-
-        if (serverData.isSecureChatEnforced()) {
-            return;
-        }
-
-        try {
-            ENFORCED_SETTER.invoke(serverData, true);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
+    public ServerDataListener(UnSignedVelocity plugin) {
+        super(PacketListenerPriority.LOWEST);
+        this.plugin = plugin;
     }
 
     @Override
     public boolean canBeLoaded() {
-        return configuration.sendSecureChatData();
+        return plugin.getConfiguration().sendSecureChatData();
+    }
+
+    @Override
+    public void onPacketSend(final PacketSendEvent event) {
+        if (event.isCancelled()) return;
+        final User user = event.getUser();
+        final PacketTypeCommon packetType = event.getPacketType();
+        if (packetType == PacketType.Play.Server.SERVER_DATA) {
+            if (user.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_19_1) && user.getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_20_3)) {
+                final WrapperPlayServerServerData packet = new WrapperPlayServerServerData(event);
+                if (!packet.isEnforceSecureChat()) {
+                    packet.setEnforceSecureChat(true);
+                }
+                event.markForReEncode(true);
+            }
+        } else if (packetType == PacketType.Play.Server.JOIN_GAME) {
+            if (user.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_20_5)) {
+                final WrapperPlayServerJoinGame packet = new WrapperPlayServerJoinGame(event);
+                if (!packet.isEnforcesSecureChat()) {
+                    packet.setEnforcesSecureChat(true);
+                }
+                event.markForReEncode(true);
+            }
+        }
     }
 }

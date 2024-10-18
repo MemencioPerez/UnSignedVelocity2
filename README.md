@@ -17,7 +17,7 @@ Check this explanation and download SignedVelocity [here](https://modrinth.com/p
 ## Requirements
 - Velocity 3.3.0+
 - Java 17+
-- [VPacketEvents](https://modrinth.com/plugin/vpacketevents)
+- [PacketEvents](https://modrinth.com/plugin/packetevents)
 
 [![](https://www.bisecthosting.com/partners/custom-banners/6fa909d5-ad2b-42c2-a7ec-1c51f8b6384f.webp)](https://www.bisecthosting.com/4drian3d)
 

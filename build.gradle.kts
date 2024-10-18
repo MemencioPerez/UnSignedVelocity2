@@ -5,9 +5,12 @@ plugins {
     alias(libs.plugins.shadow)
 }
 
+val packetEventsVersion = libs.versions.packetevents.get()
+
 repositories {
     maven("https://papermc.io/repo/repository/maven-public/")
     maven("https://repo.william278.net/velocity/")
+    maven("https://repo.codemc.io/repository/maven-${ if (packetEventsVersion.contains("SNAPSHOT")) "snapshots" else "releases"}/")
 }
 
 dependencies {
@@ -15,7 +18,7 @@ dependencies {
     compileOnly(libs.velocity.api)
     compileOnly(libs.velocity.proxy)
     annotationProcessor(libs.velocity.api)
-    compileOnly(libs.vpacketevents)
+    compileOnly(libs.packetevents)
 }
 
 sourceSets {
@@ -46,6 +49,15 @@ tasks {
         minimize()
     }
     runVelocity {
+        downloadPlugins {
+            if (packetEventsVersion.contains("SNAPSHOT")) {
+                url("https://ci.codemc.io/job/retrooper/job/packetevents/lastSuccessfulBuild/artifact/velocity/build/libs/packetevents-velocity-$packetEventsVersion.jar")
+            } else {
+                github("retrooper", "packetevents", "v$packetEventsVersion",
+                    "packetevents-velocity-$packetEventsVersion.jar"
+                )
+            }
+        }
         velocityVersion(libs.versions.velocity.get())
     }
 }
