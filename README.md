@@ -10,7 +10,7 @@ Allow your moderation plugins to work again for users with versions 1.19.1 or hi
 This plugin works by removing signed information from commands and messages sent by clients 1.19.1 or higher, allowing plugins that cancel proxy messages, such as ChatRegulator or AuthMeVelocity, to work again
 
 ## Requirements
-- Velocity 3.3.0+
+- Velocity 3.4.0+
 - Java 17+
 - [PacketEvents](https://modrinth.com/plugin/packetevents) 2.4.0+
 
