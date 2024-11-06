@@ -2,6 +2,9 @@ package io.github._4drian3d.unsignedvelocity;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerCommon;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.velocitypowered.api.command.CommandManager;
@@ -31,8 +34,11 @@ import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bstats.velocity.Metrics;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
@@ -106,6 +112,18 @@ public class UnSignedVelocity {
         logger.info(miniMessage().deserialize(
                 "<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>has been successfully loaded"));
         getPluginStatus(configuration).forEach(logger::info);
+
+        try {
+            String latestVersion = getLatestVersion();
+            if (isUpdateAvailable(latestVersion)) {
+                System.out.println("There is an update available for UnSignedVelocity: " + latestVersion);
+            } else {
+                logger.info(miniMessage().deserialize(
+                        "<#6892bd>You are using the latest version of <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient>"));
+            }
+        } catch (Exception e) {
+            logger.error("Cannot check for updates", e);
+        }
     }
 
     public boolean setupConfiguration() {
@@ -155,6 +173,22 @@ public class UnSignedVelocity {
                 miniMessage().deserialize(
                         "<#6892bd>Secure Chat Data: <aqua>" + configuration.sendSecureChatData() + " <dark_gray>|</dark_gray> <#6892bd>Safe Server Status: <aqua>" + configuration.sendSafeServerStatus())
         );
+    }
+
+    private static String getLatestVersion() throws Exception {
+        String url = "https://api.github.com/repos/MemencioPerez/UnSignedVelocity/releases/latest";
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Accept", "application/json");
+
+        try (InputStreamReader reader = new InputStreamReader(connection.getInputStream())) {
+            JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+            return jsonObject.get("tag_name").getAsString();
+        }
+    }
+
+    private static boolean isUpdateAvailable(String latestVersion) {
+        return !Constants.VERSION.equals(latestVersion);
     }
 
     public ProxyServer getServer() {
