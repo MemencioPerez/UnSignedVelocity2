@@ -6,6 +6,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandSource;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
+import io.github._4drian3d.unsignedvelocity.utils.Constants;
 import net.kyori.adventure.text.Component;
 
 import java.util.List;
@@ -20,8 +21,11 @@ public final class UnSignedVelocityCommand {
                 .executes(context -> {
                     CommandSource source = context.getSource();
 
-                    Component message = miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient>");
-                    source.sendMessage(message);
+                    List<Component> messages = List.of(miniMessage().deserialize("<#6892bd>You are using <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>" + Constants.VERSION + " by 4drian3d and MemencioPerez"),
+                                                        miniMessage().deserialize("<#6892bd>Available commands:"),
+                                                        miniMessage().deserialize("<#6892bd>/unsignedvelocity reload <dark_gray>-</dark_gray> <#6892bd>Reloads the plugin configuration and packet listeners"),
+                                                        miniMessage().deserialize("<#6892bd>/unsignedvelocity status <dark_gray>-</dark_gray> <#6892bd>Displays the plugin status"));
+                    messages.forEach(source::sendMessage);
                     return Command.SINGLE_SUCCESS;
                 })
                 .then(BrigadierCommand.requiredArgumentBuilder("subcommand", StringArgumentType.word())
