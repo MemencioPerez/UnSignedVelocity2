@@ -67,30 +67,32 @@ public class UnSignedVelocity {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
-        try {
-            VelocityConfiguration velocityConfiguration = ((VelocityServer) server).getConfiguration();
-            Field forceKeyAuthenticationField = velocityConfiguration.getClass().getDeclaredField("forceKeyAuthentication");
-            forceKeyAuthenticationField.setAccessible(true);
-            boolean forceKeyAuthenticationValue = (boolean) forceKeyAuthenticationField.get(velocityConfiguration);
-            if (forceKeyAuthenticationValue) {
-                logger.warn("WARN: The 'force-key-authentication' option in the Velocity configuration file (velocity.toml) is set to 'true'.");
-                logger.warn("UnSignedVelocity requires that option to be set to 'false', so it will try to set it to 'true' forcefully at runtime.");
-                logger.warn("If you want to hide this warning, set 'force-key-authentication' to 'false' in Velocity settings and restart the proxy.");
-                logger.warn("Trying to set 'force-key-authentication' to false...");
-                forceKeyAuthenticationField.setBoolean(velocityConfiguration, false);
-                forceKeyAuthenticationField.setAccessible(false);
-                logger.warn("The 'force-key-authentication' field was found and set to false at runtime (this doesn't modify velocity.toml file).");
-            }
-        } catch (NoSuchFieldException e) {
-            logger.error("The plugin cannot find 'force-key-authentication' option field, 'remove-signed-key-on-join' option will not work. Contact the developer of this plugin.", e);
-        } catch (InaccessibleObjectException | SecurityException | IllegalAccessException | IllegalArgumentException | NullPointerException | ExceptionInInitializerError e ) {
-            logger.error("The plugin cannot access 'force-key-authentication' option field, 'remove-signed-key-on-join' option will not work. If setting 'force-key-authentication' to 'false' manually and restarting the proxy doesn't work, contact the developer of this plugin.", e);
-        }
-
         factory.make(this, 17514);
 
         if (!setupConfiguration()) {
             return;
+        }
+
+        if (configuration.removeSignedKeyOnJoin()) {
+            try {
+                VelocityConfiguration velocityConfiguration = ((VelocityServer) server).getConfiguration();
+                Field forceKeyAuthenticationField = velocityConfiguration.getClass().getDeclaredField("forceKeyAuthentication");
+                forceKeyAuthenticationField.setAccessible(true);
+                boolean forceKeyAuthenticationValue = (boolean) forceKeyAuthenticationField.get(velocityConfiguration);
+                if (forceKeyAuthenticationValue) {
+                    logger.warn("WARN: The 'force-key-authentication' option in the Velocity configuration file (velocity.toml) is set to 'true'.");
+                    logger.warn("UnSignedVelocity requires that option to be set to 'false', so it will try to set it to 'true' forcefully at runtime.");
+                    logger.warn("If you want to hide this warning, set 'force-key-authentication' to 'false' in Velocity settings and restart the proxy.");
+                    logger.warn("Trying to set 'force-key-authentication' to false...");
+                    forceKeyAuthenticationField.setBoolean(velocityConfiguration, false);
+                    forceKeyAuthenticationField.setAccessible(false);
+                    logger.warn("The 'force-key-authentication' field was found and set to false at runtime (this doesn't modify velocity.toml file).");
+                }
+            } catch (NoSuchFieldException e) {
+                logger.error("The plugin cannot find 'force-key-authentication' option field, 'remove-signed-key-on-join' option will not work. Contact the developer of this plugin.", e);
+            } catch (InaccessibleObjectException | SecurityException | IllegalAccessException | IllegalArgumentException | NullPointerException | ExceptionInInitializerError e ) {
+                logger.error("The plugin cannot access 'force-key-authentication' option field, 'remove-signed-key-on-join' option will not work. If setting 'force-key-authentication' to 'false' manually and restarting the proxy doesn't work, contact the developer of this plugin.", e);
+            }
         }
 
         setupLoadablePacketListeners();
