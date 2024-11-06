@@ -1,7 +1,11 @@
 package io.github._4drian3d.unsignedvelocity;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerCommon;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Dependency;
@@ -10,6 +14,7 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.proxy.VelocityServer;
 import com.velocitypowered.proxy.config.VelocityConfiguration;
+import io.github._4drian3d.unsignedvelocity.commands.UnSignedVelocityCommand;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.LoadablePacketListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatHeaderListener;
@@ -21,6 +26,7 @@ import io.github._4drian3d.unsignedvelocity.listener.packet.login.LoginListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.data.ServerDataListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.status.ServerResponseListener;
 import io.github._4drian3d.unsignedvelocity.utils.Constants;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bstats.velocity.Metrics;
 
@@ -28,6 +34,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
@@ -39,7 +46,7 @@ import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
         version = Constants.VERSION,
         dependencies = { @Dependency(id = "packetevents") }
 )
-public final class UnSignedVelocity {
+public class UnSignedVelocity {
 
     private final ProxyServer server;
     private final Injector injector;
@@ -47,6 +54,7 @@ public final class UnSignedVelocity {
     private final Metrics.Factory factory;
     private final ComponentLogger logger;
     private Configuration configuration;
+    private List<? extends LoadablePacketListener> packetListeners;
 
     @Inject
     public UnSignedVelocity(ProxyServer server, Injector injector, @DataDirectory Path dataDirectory, Metrics.Factory factory, ComponentLogger logger) {
@@ -81,44 +89,70 @@ public final class UnSignedVelocity {
 
         factory.make(this, 17514);
 
-        try {
-            configuration = Configuration.loadConfig(dataDirectory);
-        } catch (IOException e) {
-            logger.error("Cannot load configuration", e);
+        if (!setupConfiguration()) {
             return;
         }
 
-        Stream.of(
-            LoginListener.class,
-            CommandListener.class,
-            ClientChatListener.class,
-            ServerChatListener.class,
-            ChatHeaderListener.class,
-            ChatSessionListener.class,
-            ServerDataListener.class,
-            ServerResponseListener.class
-        ).map(injector::getInstance)
-        .filter(LoadablePacketListener::canBeLoaded)
-        .forEach(LoadablePacketListener::register);
+        setupLoadablePacketListeners();
+
+        CommandManager commandManager = server.getCommandManager();
+        CommandMeta commandMeta = commandManager.metaBuilder("unsignedvelocity")
+                .plugin(this)
+                .build();
+        server.getCommandManager().register(commandMeta, UnSignedVelocityCommand.createBrigadierCommand(this));
 
         logger.info(miniMessage().deserialize(
                 "<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>has been successfully loaded"));
-        logger.info(miniMessage().deserialize(
-                "<#6892bd>Remove Signed Key: <aqua>{}"), configuration.removeSignedKeyOnJoin());
-        logger.info(miniMessage().deserialize(
-                        "<#6892bd>UnSigned <dark_gray>|</dark_gray> Commands: <aqua>{}</aqua> <dark_gray>|</dark_gray> Chat: <aqua>{}"),
-                configuration.removeSignedCommandInformation(),
-                configuration.applyChatMessages());
-        logger.info(miniMessage().deserialize(
-                "<#6892bd>Convert Player Chat Messages to System Chat Messages: <aqua>{}</aqua>"), configuration.convertPlayerChatToSystemChat());
-        logger.info(miniMessage().deserialize(
-                        "<#6892bd>Block <dark_gray>|</dark_gray> <#6892bd>Chat Header Packets: <aqua>{}</aqua> <dark_gray>|</dark_gray> <#6892bd>Chat Session Packets: <aqua>{}</aqua>"),
-                configuration.blockChatHeaderPackets(),
-                configuration.blockChatSessionPackets());
-        logger.info(miniMessage().deserialize(
-                        "<#6892bd>Secure Chat Data: <aqua>{} <dark_gray>|</dark_gray> <#6892bd>Safe Server Status: <aqua>{}"),
-                configuration.sendSecureChatData(),
-                configuration.sendSafeServerStatus());
+        getPluginStatus(configuration).forEach(logger::info);
+    }
+
+    public boolean setupConfiguration() {
+        try {
+            this.configuration = Configuration.loadConfig(dataDirectory);
+            return true;
+        } catch (IOException e) {
+            logger.error("Cannot load configuration", e);
+            return false;
+        }
+    }
+
+    public void setupLoadablePacketListeners() {
+        if (this.packetListeners != null && !this.packetListeners.isEmpty()) {
+            for (LoadablePacketListener packetListener : packetListeners) {
+                PacketEvents.getAPI().getEventManager().unregisterListener((PacketListenerCommon) packetListener);
+            }
+        }
+
+        List<? extends LoadablePacketListener> packetListeners = Stream.of(
+                        LoginListener.class,
+                        CommandListener.class,
+                        ClientChatListener.class,
+                        ServerChatListener.class,
+                        ChatHeaderListener.class,
+                        ChatSessionListener.class,
+                        ServerDataListener.class,
+                        ServerResponseListener.class
+                ).map(injector::getInstance)
+                .filter(LoadablePacketListener::canBeLoaded)
+                .toList();
+
+        packetListeners.forEach(LoadablePacketListener::register);
+        this.packetListeners = packetListeners;
+    }
+
+    public List<Component> getPluginStatus(Configuration configuration) {
+        return List.of(
+                miniMessage().deserialize(
+                        "<#6892bd>Remove Signed Key: <aqua>" + configuration.removeSignedKeyOnJoin()),
+                miniMessage().deserialize(
+                        "<#6892bd>UnSigned <dark_gray>|</dark_gray> Commands: <aqua>" + configuration.removeSignedCommandInformation() + "</aqua> <dark_gray>|</dark_gray> Chat: <aqua>" + configuration.applyChatMessages()),
+                miniMessage().deserialize(
+                        "<#6892bd>Convert Player Chat Messages to System Chat Messages: <aqua>" + configuration.convertPlayerChatToSystemChat()),
+                miniMessage().deserialize(
+                        "<#6892bd>Block <dark_gray>|</dark_gray> <#6892bd>Chat Header Packets: <aqua>" + configuration.blockChatHeaderPackets() + "</aqua> <dark_gray>|</dark_gray> <#6892bd>Chat Session Packets: <aqua>" + configuration.blockChatSessionPackets() + "</aqua>"),
+                miniMessage().deserialize(
+                        "<#6892bd>Secure Chat Data: <aqua>" + configuration.sendSecureChatData() + " <dark_gray>|</dark_gray> <#6892bd>Safe Server Status: <aqua>" + configuration.sendSafeServerStatus())
+        );
     }
 
     public ProxyServer getServer() {
