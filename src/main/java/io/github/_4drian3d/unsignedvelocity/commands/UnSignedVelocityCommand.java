@@ -43,7 +43,7 @@ public final class UnSignedVelocityCommand {
                                     Component message;
                                     try {
                                         plugin.setupConfiguration();
-                                        plugin.setupLoadablePacketListeners();
+                                        plugin.setupConfigurablePacketListeners();
                                         message = miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>has been successfully reloaded");
                                     } catch (IOException e) {
                                         message = miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>configuration failed to load, check your configuration file and try again");
@@ -52,7 +52,7 @@ public final class UnSignedVelocityCommand {
                                     yield Command.SINGLE_SUCCESS;
                                 }
                                 case "status" -> {
-                                    plugin.getPluginStatus(plugin.getConfiguration()).forEach(source::sendMessage);
+                                    plugin.getPluginStatusMessages().forEach(source::sendMessage);
                                     yield Command.SINGLE_SUCCESS;
                                 }
                                 default -> BrigadierCommand.FORWARD;

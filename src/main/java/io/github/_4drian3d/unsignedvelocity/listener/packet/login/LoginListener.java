@@ -54,7 +54,7 @@ public final class LoginListener extends ConfigurablePacketListener {
         final User user = event.getUser();
         final PacketTypeCommon packetType = event.getPacketType();
         if (packetType == PacketType.Login.Client.LOGIN_START) {
-            if (ClientVersionUtil.doesNotEnforceSignedChatOnLogin(user)) {
+            if (ClientVersionUtil.doesNotEnforceKeyAuthentication(user)) {
                 return;
             }
 
@@ -66,7 +66,7 @@ public final class LoginListener extends ConfigurablePacketListener {
             packet.setSignatureData(null);
             event.markForReEncode(true);
         } else if (packetType == PacketType.Login.Client.ENCRYPTION_RESPONSE) {
-            if (ClientVersionUtil.doesNotEnforceSignedChatOnLogin(user)) {
+            if (ClientVersionUtil.doesNotEnforceKeyAuthentication(user)) {
                 return;
             }
 
@@ -90,7 +90,7 @@ public final class LoginListener extends ConfigurablePacketListener {
         final User user = event.getUser();
         final PacketTypeCommon packetType = event.getPacketType();
         if (packetType == PacketType.Login.Server.ENCRYPTION_REQUEST) {
-            if (ClientVersionUtil.doesNotEnforceSignedChatOnLogin(user)) {
+            if (ClientVersionUtil.doesNotEnforceKeyAuthentication(user)) {
                 return;
             }
             WrapperLoginServerEncryptionRequest packet = new WrapperLoginServerEncryptionRequest(event);

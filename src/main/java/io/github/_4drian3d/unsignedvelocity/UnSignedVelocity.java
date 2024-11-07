@@ -84,7 +84,7 @@ public class UnSignedVelocity {
             }
         }
 
-        setupLoadablePacketListeners();
+        setupConfigurablePacketListeners();
 
         CommandManager commandManager = server.getCommandManager();
         CommandMeta commandMeta = commandManager.metaBuilder("unsignedvelocity")
@@ -94,10 +94,14 @@ public class UnSignedVelocity {
 
         logger.info(miniMessage().deserialize(
                 "<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>has been successfully loaded"));
-        getPluginStatus(configuration).forEach(logger::info);
+        getPluginStatusMessages().forEach(logger::info);
 
         UpdateChecker updateChecker = new UpdateChecker(logger);
         updateChecker.checkForUpdates();
+    }
+
+    public void setupConfiguration() throws IOException {
+        this.configuration = Configuration.loadConfig(dataDirectory);
     }
 
     private void forciblyDisableForceKeyAuthentication() throws NoSuchFieldException, IllegalAccessException {
@@ -116,11 +120,7 @@ public class UnSignedVelocity {
         }
     }
 
-    public void setupConfiguration() throws IOException {
-        this.configuration = Configuration.loadConfig(dataDirectory);
-    }
-
-    public void setupLoadablePacketListeners() {
+    public void setupConfigurablePacketListeners() {
         if (this.packetListeners != null && !this.packetListeners.isEmpty()) {
             packetListeners.forEach(ConfigurablePacketListener::unregister);
         }
@@ -142,7 +142,7 @@ public class UnSignedVelocity {
         this.packetListeners = packetListeners;
     }
 
-    public List<Component> getPluginStatus(Configuration configuration) {
+    public List<Component> getPluginStatusMessages() {
         return List.of(
                 miniMessage().deserialize(
                         "<#6892bd>Remove Signed Key: <aqua>" + configuration.removeSignedKeyOnJoin()),
