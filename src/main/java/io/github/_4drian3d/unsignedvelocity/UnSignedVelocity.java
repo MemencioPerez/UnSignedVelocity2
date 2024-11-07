@@ -105,7 +105,7 @@ public class UnSignedVelocity {
     }
 
     public void setupConfiguration() throws IOException {
-        this.configuration = Configuration.loadConfig(dataDirectory);
+        configuration = Configuration.loadConfig(dataDirectory);
     }
 
     private void forciblyDisableForceKeyAuthentication() throws NoSuchFieldException, IllegalAccessException {
@@ -125,11 +125,11 @@ public class UnSignedVelocity {
     }
 
     public void setupConfigurablePacketListeners() {
-        if (this.packetListeners != null && !this.packetListeners.isEmpty()) {
+        if (packetListeners != null && !packetListeners.isEmpty()) {
             packetListeners.forEach(ConfigurablePacketListener::unregister);
         }
 
-        List<? extends ConfigurablePacketListener> packetListeners = Stream.of(
+        List<? extends ConfigurablePacketListener> loadablePacketListeners = Stream.of(
                         LoginListener.class,
                         CommandListener.class,
                         ClientChatListener.class,
@@ -143,7 +143,7 @@ public class UnSignedVelocity {
                 .toList();
 
         packetListeners.forEach(ConfigurablePacketListener::register);
-        this.packetListeners = packetListeners;
+        packetListeners = loadablePacketListeners;
     }
 
     public List<Component> getPluginStatusMessages() {
@@ -159,13 +159,5 @@ public class UnSignedVelocity {
                 miniMessage().deserialize(
                         "<#6892bd>Secure Chat Data: <aqua>" + configuration.sendSecureChatData() + " <dark_gray>|</dark_gray> <#6892bd>Safe Server Status: <aqua>" + configuration.sendSafeServerStatus())
         );
-    }
-
-    public ProxyServer getServer() {
-        return server;
-    }
-
-    public Configuration getConfiguration() {
-        return configuration;
     }
 }
