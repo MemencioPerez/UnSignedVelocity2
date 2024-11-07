@@ -13,7 +13,7 @@ import io.github._4drian3d.unsignedvelocity.listener.packet.ConfigurablePacketLi
 
 import java.time.Instant;
 
-public final class ClientChatListener extends ConfigurablePacketListener {
+public class ClientChatListener extends ConfigurablePacketListener {
     @Inject
     public ClientChatListener(Configuration configuration) {
         super(PacketListenerPriority.LOWEST, configuration);
@@ -25,18 +25,17 @@ public final class ClientChatListener extends ConfigurablePacketListener {
     }
 
     @Override
-    public void onPacketReceive(final PacketReceiveEvent event) {
+    public void onPacketReceive(PacketReceiveEvent event) {
         if (event.isCancelled()) return;
-        final PacketTypeCommon packetType = event.getPacketType();
+        PacketTypeCommon packetType = event.getPacketType();
         if (packetType == PacketType.Play.Client.CHAT_MESSAGE) {
-            final WrapperPlayClientChatMessage packet = new WrapperPlayClientChatMessage(event);
-            if (packet.getMessageSignData().isEmpty()) {
-                return;
+            WrapperPlayClientChatMessage packet = new WrapperPlayClientChatMessage(event);
+            if (packet.getMessageSignData().isPresent()) {
+                MessageSignData packetMessageSignData = packet.getMessageSignData().get();
+                Instant packetTimestamp = packetMessageSignData.getTimestamp();
+                packet.setMessageSignData(new MessageSignData(new SaltSignature(0L, new byte[0]), packetTimestamp));
+                event.markForReEncode(true);
             }
-            MessageSignData packetMessageSignData = packet.getMessageSignData().get();
-            Instant packetTimestamp = packetMessageSignData.getTimestamp();
-            packet.setMessageSignData(new MessageSignData(new SaltSignature(0L, new byte[0]), packetTimestamp));
-            event.markForReEncode(true);
         }
     }
 }

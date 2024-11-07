@@ -13,7 +13,7 @@ import io.github._4drian3d.unsignedvelocity.listener.packet.ConfigurablePacketLi
 
 import java.time.Instant;
 
-public final class CommandListener extends ConfigurablePacketListener {
+public class CommandListener extends ConfigurablePacketListener {
     @Inject
     public CommandListener(Configuration configuration) {
         super(PacketListenerPriority.LOWEST, configuration);
@@ -25,11 +25,11 @@ public final class CommandListener extends ConfigurablePacketListener {
     }
 
     @Override
-    public void onPacketReceive(final PacketReceiveEvent event) {
+    public void onPacketReceive(PacketReceiveEvent event) {
         if (event.isCancelled()) return;
-        final PacketTypeCommon packetType = event.getPacketType();
+        PacketTypeCommon packetType = event.getPacketType();
         if (packetType == PacketType.Play.Client.CHAT_COMMAND) {
-            final WrapperPlayClientChatCommand packet = new WrapperPlayClientChatCommand(event);
+            WrapperPlayClientChatCommand packet = new WrapperPlayClientChatCommand(event);
             MessageSignData packetMessageSignData = packet.getMessageSignData();
             Instant packetTimestamp = packetMessageSignData.getTimestamp();
             packet.setMessageSignData(new MessageSignData(new SaltSignature(0L, new byte[0]), packetTimestamp));

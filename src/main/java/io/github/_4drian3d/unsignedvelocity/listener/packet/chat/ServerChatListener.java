@@ -19,14 +19,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public final class ServerChatListener extends ConfigurablePacketListener {
+public class ServerChatListener extends ConfigurablePacketListener {
     @Inject
     public ServerChatListener(Configuration configuration) {
         super(PacketListenerPriority.LOWEST, configuration);
     }
 
     private static @Nullable Component getComponentFromChatPacket(PacketSendEvent event) {
-        final WrapperPlayServerChatMessage packet = new WrapperPlayServerChatMessage(event);
+        WrapperPlayServerChatMessage packet = new WrapperPlayServerChatMessage(event);
         ChatMessage chatMessage = packet.getMessage();
         Component messageContent = chatMessage.getChatContent();
         if (chatMessage instanceof ChatMessage_v1_19) {
@@ -48,18 +48,17 @@ public final class ServerChatListener extends ConfigurablePacketListener {
     }
 
     @Override
-    public void onPacketSend(final PacketSendEvent event) {
+    public void onPacketSend(PacketSendEvent event) {
         if (event.isCancelled()) return;
-        final PacketTypeCommon packetType = event.getPacketType();
+        ClientVersion version = event.getUser().getClientVersion();
+        PacketTypeCommon packetType = event.getPacketType();
         if (packetType == PacketType.Play.Server.CHAT_MESSAGE) {
-            if (event.getUser().getClientVersion().isOlderThan(ClientVersion.V_1_19)) {
-                return;
+            if (version.isNewerThan(ClientVersion.V_1_18_2)) {
+                Component messageContent = getComponentFromChatPacket(event);
+                WrapperPlayServerSystemChatMessage newPacket = new WrapperPlayServerSystemChatMessage(false, messageContent);
+                event.getUser().sendPacketSilently(newPacket);
+                event.setCancelled(true);
             }
-
-            Component messageContent = getComponentFromChatPacket(event);
-            final WrapperPlayServerSystemChatMessage newPacket = new WrapperPlayServerSystemChatMessage(false, messageContent);
-            event.getUser().sendPacketSilently(newPacket);
-            event.setCancelled(true);
         }
     }
 }

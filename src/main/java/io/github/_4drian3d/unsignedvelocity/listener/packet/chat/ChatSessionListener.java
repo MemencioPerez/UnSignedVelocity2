@@ -8,7 +8,7 @@ import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.packet.ConfigurablePacketListener;
 
-public final class ChatSessionListener extends ConfigurablePacketListener {
+public class ChatSessionListener extends ConfigurablePacketListener {
     @Inject
     public ChatSessionListener(Configuration configuration) {
         super(PacketListenerPriority.LOWEST, configuration);
@@ -20,9 +20,9 @@ public final class ChatSessionListener extends ConfigurablePacketListener {
     }
 
     @Override
-    public void onPacketReceive(final PacketReceiveEvent event) {
+    public void onPacketReceive(PacketReceiveEvent event) {
         if (event.isCancelled()) return;
-        final PacketTypeCommon packetType = event.getPacketType();
+        PacketTypeCommon packetType = event.getPacketType();
         if (packetType == PacketType.Play.Client.CHAT_SESSION_UPDATE) {
             event.setCancelled(true);
         }

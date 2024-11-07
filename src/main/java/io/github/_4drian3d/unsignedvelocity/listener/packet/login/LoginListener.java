@@ -5,7 +5,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
-import com.github.retrooper.packetevents.manager.server.VersionComparison;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
@@ -23,7 +22,7 @@ import io.github._4drian3d.unsignedvelocity.listener.packet.ConfigurablePacketLi
 import java.security.PublicKey;
 import java.util.concurrent.TimeUnit;
 
-public final class LoginListener extends ConfigurablePacketListener {
+public class LoginListener extends ConfigurablePacketListener {
     private final ProxyServer server;
     private final Cache<User, byte[]> cache;
 
@@ -53,53 +52,46 @@ public final class LoginListener extends ConfigurablePacketListener {
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        final User user = event.getUser();
-        final PacketTypeCommon packetType = event.getPacketType();
+        if (event.isCancelled()) return;
+        User user = event.getUser();
+        ClientVersion version = user.getClientVersion();
+        PacketTypeCommon packetType = event.getPacketType();
         if (packetType == PacketType.Login.Client.LOGIN_START) {
-            if (!user.getClientVersion().is(VersionComparison.EQUALS, ClientVersion.V_1_19) && !user.getClientVersion().is(VersionComparison.EQUALS, ClientVersion.V_1_19_1)) {
-                return;
+            if (version.isNewerThan(ClientVersion.V_1_18_2) && version.isOlderThan(ClientVersion.V_1_19_3)) {
+                WrapperLoginClientLoginStart packet = new WrapperLoginClientLoginStart(event);
+                if (packet.getSignatureData().isPresent()) {
+                    packet.setSignatureData(null);
+                    event.markForReEncode(true);
+                }
             }
-
-            WrapperLoginClientLoginStart packet = new WrapperLoginClientLoginStart(event);
-
-            if (packet.getSignatureData().isEmpty()) {
-                return;
-            }
-            packet.setSignatureData(null);
-            event.markForReEncode(true);
         } else if (packetType == PacketType.Login.Client.ENCRYPTION_RESPONSE) {
-            if (!user.getClientVersion().is(VersionComparison.EQUALS, ClientVersion.V_1_19) && !user.getClientVersion().is(VersionComparison.EQUALS, ClientVersion.V_1_19_1)) {
-                return;
-            }
-
-            WrapperLoginClientEncryptionResponse packet = new WrapperLoginClientEncryptionResponse(event);
-
-            boolean cacheContainsUser = cache.getIfPresent(user) != null;
-            if (packet.getSaltSignature().isPresent() && cacheContainsUser) {
+            if (version.isNewerThan(ClientVersion.V_1_18_2) && version.isOlderThan(ClientVersion.V_1_19_3)) {
+                WrapperLoginClientEncryptionResponse packet = new WrapperLoginClientEncryptionResponse(event);
                 byte[] encryptedVerifyToken = cache.getIfPresent(user);
-
-                packet.setSaltSignature(null);
-                packet.setEncryptedVerifyToken(encryptedVerifyToken);
+                if (packet.getSaltSignature().isPresent() && encryptedVerifyToken != null) {
+                    packet.setSaltSignature(null);
+                    packet.setEncryptedVerifyToken(encryptedVerifyToken);
+                }
+                cache.invalidate(user);
+                event.markForReEncode(true);
             }
-            cache.invalidate(user);
-            event.markForReEncode(true);
         }
     }
 
     @Override
     public void onPacketSend(PacketSendEvent event) {
         if (event.isCancelled()) return;
-        final User user = event.getUser();
-        final PacketTypeCommon packetType = event.getPacketType();
+        User user = event.getUser();
+        ClientVersion version = user.getClientVersion();
+        PacketTypeCommon packetType = event.getPacketType();
         if (packetType == PacketType.Login.Server.ENCRYPTION_REQUEST) {
-            if (!user.getClientVersion().is(VersionComparison.EQUALS, ClientVersion.V_1_19) && !user.getClientVersion().is(VersionComparison.EQUALS, ClientVersion.V_1_19_1)) {
-                return;
+            if (version.isNewerThan(ClientVersion.V_1_18_2) && version.isOlderThan(ClientVersion.V_1_19_3)) {
+                WrapperLoginServerEncryptionRequest packet = new WrapperLoginServerEncryptionRequest(event);
+                PublicKey serverPublicKey = packet.getPublicKey();
+                byte[] serverVerifyToken = packet.getVerifyToken();
+                byte[] encryptedVerifyToken = MinecraftEncryptionUtil.encryptRSA(serverPublicKey, serverVerifyToken);
+                cache.put(user, encryptedVerifyToken);
             }
-            WrapperLoginServerEncryptionRequest packet = new WrapperLoginServerEncryptionRequest(event);
-            PublicKey serverPublicKey = packet.getPublicKey();
-            byte[] serverVerifyToken = packet.getVerifyToken();
-            byte[] encryptedVerifyToken = MinecraftEncryptionUtil.encryptRSA(serverPublicKey, serverVerifyToken);
-            cache.put(user, encryptedVerifyToken);
         }
     }
 }
