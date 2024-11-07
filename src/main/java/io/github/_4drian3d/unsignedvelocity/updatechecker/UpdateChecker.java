@@ -30,18 +30,16 @@ public class UpdateChecker {
         }
     }
 
-    private static boolean isUpdateAvailable(Version latestVersion) {
-        return Version.parse(Constants.VERSION).isEqualOrLowerThan(latestVersion);
-    }
-
     public void checkForUpdates() {
         try {
+            Version currentVersion = Version.parse(Constants.VERSION);
             Version latestVersion = getLatestVersion();
-            if (isUpdateAvailable(latestVersion)) {
-                logger.info("There is an update available for UnSignedVelocity: {} (Your version: {})", latestVersion, Constants.VERSION);
+            if (currentVersion.isLowerThan(latestVersion)) {
+                logger.info(miniMessage().deserialize("<#6892bd>There is an update available for <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient><#6892bd>: " + latestVersion + " (Your version: " + currentVersion + ")"));
+            } else if (currentVersion.isHigherThan(latestVersion)) {
+                logger.info(miniMessage().deserialize("<#6892bd>You are using a development build of <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient><#6892bd>: " + currentVersion + " (Latest release: " + latestVersion + ")"));
             } else {
-                logger.info(miniMessage().deserialize(
-                        "<#6892bd>You are using the latest version of <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient>"));
+                logger.info(miniMessage().deserialize("<#6892bd>You are using the latest version of <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient>"));
             }
         } catch (Exception e) {
             logger.error("Cannot check for updates", e);
