@@ -67,7 +67,10 @@ public class UnSignedVelocity {
     public void onProxyInitialize(ProxyInitializeEvent event) {
         factory.make(this, 17514);
 
-        if (!setupConfiguration()) {
+        try {
+            setupConfiguration();
+        } catch (IOException e) {
+            logger.error("Cannot load configuration", e);
             return;
         }
 
@@ -113,14 +116,8 @@ public class UnSignedVelocity {
         }
     }
 
-    public boolean setupConfiguration() {
-        try {
-            this.configuration = Configuration.loadConfig(dataDirectory);
-            return true;
-        } catch (IOException e) {
-            logger.error("Cannot load configuration", e);
-            return false;
-        }
+    public void setupConfiguration() throws IOException {
+        this.configuration = Configuration.loadConfig(dataDirectory);
     }
 
     public void setupLoadablePacketListeners() {

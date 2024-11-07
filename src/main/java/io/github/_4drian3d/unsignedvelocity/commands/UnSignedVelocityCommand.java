@@ -9,6 +9,7 @@ import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
 import io.github._4drian3d.unsignedvelocity.utils.Constants;
 import net.kyori.adventure.text.Component;
 
+import java.io.IOException;
 import java.util.List;
 
 import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
@@ -40,10 +41,11 @@ public final class UnSignedVelocityCommand {
                             return switch (argumentProvided) {
                                 case "reload" -> {
                                     Component message;
-                                    if (plugin.setupConfiguration()) {
+                                    try {
+                                        plugin.setupConfiguration();
                                         plugin.setupLoadablePacketListeners();
                                         message = miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>has been successfully reloaded");
-                                    } else {
+                                    } catch (IOException e) {
                                         message = miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>configuration failed to load, check your configuration file and try again");
                                     }
                                     source.sendMessage(message);
