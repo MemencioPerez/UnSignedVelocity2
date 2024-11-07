@@ -33,8 +33,7 @@ public final class UnSignedVelocityCommand {
                 case "reload" -> {
                     Component message;
                     try {
-                        plugin.setupConfigurationModule();
-                        plugin.setupConfigurablePacketListeners();
+                        plugin.loadMainFeatures();
                         message = miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>has been successfully reloaded");
                     } catch (IOException e) {
                         message = miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>configuration failed to load, check your configuration file and try again");
