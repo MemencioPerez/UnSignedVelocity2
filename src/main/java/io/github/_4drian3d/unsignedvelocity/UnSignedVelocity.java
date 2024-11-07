@@ -1,6 +1,5 @@
 package io.github._4drian3d.unsignedvelocity;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.velocitypowered.api.command.CommandManager;
@@ -123,9 +122,7 @@ public class UnSignedVelocity {
 
     public void setupLoadablePacketListeners() {
         if (this.packetListeners != null && !this.packetListeners.isEmpty()) {
-            for (ConfigurablePacketListener packetListener : packetListeners) {
-                PacketEvents.getAPI().getEventManager().unregisterListener(packetListener);
-            }
+            packetListeners.forEach(ConfigurablePacketListener::unregister);
         }
 
         List<? extends ConfigurablePacketListener> packetListeners = Stream.of(

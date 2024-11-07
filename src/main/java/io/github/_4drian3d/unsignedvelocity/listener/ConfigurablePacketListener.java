@@ -13,5 +13,9 @@ public abstract class ConfigurablePacketListener extends PacketListenerAbstract 
         PacketEvents.getAPI().getEventManager().registerListener(this);
     }
 
+    public void unregister() {
+        PacketEvents.getAPI().getEventManager().unregisterListener(this);
+    }
+
     public abstract boolean canBeLoaded();
 }
