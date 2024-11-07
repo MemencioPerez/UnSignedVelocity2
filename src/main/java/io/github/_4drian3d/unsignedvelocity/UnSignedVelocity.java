@@ -142,7 +142,7 @@ public class UnSignedVelocity {
                 .filter(ConfigurablePacketListener::canBeLoaded)
                 .toList();
 
-        packetListeners.forEach(ConfigurablePacketListener::register);
+        loadablePacketListeners.forEach(ConfigurablePacketListener::register);
         packetListeners = loadablePacketListeners;
     }
 
