@@ -14,6 +14,8 @@ import com.velocitypowered.proxy.VelocityServer;
 import com.velocitypowered.proxy.config.VelocityConfiguration;
 import io.github._4drian3d.unsignedvelocity.commands.UnSignedVelocityCommand;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
+import io.github._4drian3d.unsignedvelocity.configuration.ConfigurationModule;
+import io.github._4drian3d.unsignedvelocity.configuration.ConfigurationProvider;
 import io.github._4drian3d.unsignedvelocity.listener.packet.ConfigurablePacketListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatHeaderListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatSessionListener;
@@ -51,7 +53,7 @@ public class UnSignedVelocity {
     private final Path dataDirectory;
     private final Metrics.Factory factory;
     private final ComponentLogger logger;
-    private Configuration configuration;
+    private ConfigurationModule configurationModule;
     private List<? extends ConfigurablePacketListener> packetListeners;
 
     @Inject
@@ -68,15 +70,13 @@ public class UnSignedVelocity {
         factory.make(this, 17514);
 
         try {
-            setupConfiguration();
+            setupConfigurationModule();
         } catch (IOException e) {
             logger.error("Cannot load configuration", e);
             return;
         }
 
-        injector = injector.createChildInjector(
-                binder -> binder.bind(Configuration.class).toInstance(configuration)
-        );
+        Configuration configuration = configurationModule.getConfigurationProvider().get();
 
         if (configuration.removeSignedKeyOnJoin()) {
             try {
@@ -104,8 +104,15 @@ public class UnSignedVelocity {
         updateChecker.checkForUpdates();
     }
 
-    public void setupConfiguration() throws IOException {
-        configuration = Configuration.loadConfig(dataDirectory);
+    public void setupConfigurationModule() throws IOException {
+        Configuration configuration = Configuration.loadConfig(dataDirectory);
+        if (configurationModule == null) {
+            configurationModule = new ConfigurationModule(configuration);
+            injector = injector.createChildInjector(configurationModule);
+        } else {
+            ConfigurationProvider configurationProvider = configurationModule.getConfigurationProvider();
+            configurationProvider.updateConfiguration(configuration);
+        }
     }
 
     private void forciblyDisableForceKeyAuthentication() throws NoSuchFieldException, IllegalAccessException {
@@ -147,6 +154,7 @@ public class UnSignedVelocity {
     }
 
     public List<Component> getPluginStatusMessages() {
+        Configuration configuration = configurationModule.getConfigurationProvider().get();
         return List.of(
                 miniMessage().deserialize(
                         "<#6892bd>Remove Signed Key: <aqua>" + configuration.removeSignedKeyOnJoin()),

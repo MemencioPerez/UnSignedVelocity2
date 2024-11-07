@@ -33,7 +33,7 @@ public final class UnSignedVelocityCommand {
                 case "reload" -> {
                     Component message;
                     try {
-                        plugin.setupConfiguration();
+                        plugin.setupConfigurationModule();
                         plugin.setupConfigurablePacketListeners();
                         message = miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>has been successfully reloaded");
                     } catch (IOException e) {
