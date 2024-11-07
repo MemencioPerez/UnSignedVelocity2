@@ -13,8 +13,9 @@ import com.github.retrooper.packetevents.wrapper.login.client.WrapperLoginClient
 import com.github.retrooper.packetevents.wrapper.login.client.WrapperLoginClientLoginStart;
 import com.github.retrooper.packetevents.wrapper.login.server.WrapperLoginServerEncryptionRequest;
 import com.google.inject.Inject;
+import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.config.ProxyConfig;
-import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
+import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.packet.ConfigurablePacketListener;
 import io.github._4drian3d.unsignedvelocity.utils.ClientVersionUtil;
 
@@ -22,18 +23,18 @@ import java.security.PublicKey;
 import java.util.concurrent.TimeUnit;
 
 public final class LoginListener extends ConfigurablePacketListener {
-    private final UnSignedVelocity plugin;
+    private final ProxyServer server;
     private final Cache<User, byte[]> cache;
 
     @Inject
-    public LoginListener(UnSignedVelocity plugin) {
-        super(PacketListenerPriority.LOWEST);
-        this.plugin = plugin;
+    public LoginListener(Configuration configuration, ProxyServer server) {
+        super(PacketListenerPriority.LOWEST, configuration);
+        this.server = server;
         this.cache = setupCache();
     }
 
     private Cache<User, byte[]> setupCache() {
-        ProxyConfig proxyConfig = plugin.getServer().getConfiguration();
+        ProxyConfig proxyConfig = server.getConfiguration();
 
         int connectTimeout = proxyConfig.getConnectTimeout();
         int showMaxPlayers = proxyConfig.getShowMaxPlayers();
@@ -46,7 +47,7 @@ public final class LoginListener extends ConfigurablePacketListener {
 
     @Override
     public boolean canBeLoaded() {
-        return plugin.getConfiguration().removeSignedKeyOnJoin();
+        return configuration.removeSignedKeyOnJoin();
     }
 
     @Override

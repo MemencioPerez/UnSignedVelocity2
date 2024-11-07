@@ -47,7 +47,7 @@ import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 public class UnSignedVelocity {
 
     private final ProxyServer server;
-    private final Injector injector;
+    private Injector injector;
     private final Path dataDirectory;
     private final Metrics.Factory factory;
     private final ComponentLogger logger;
@@ -73,6 +73,10 @@ public class UnSignedVelocity {
             logger.error("Cannot load configuration", e);
             return;
         }
+
+        injector = injector.createChildInjector(
+                binder -> binder.bind(Configuration.class).toInstance(configuration)
+        );
 
         if (configuration.removeSignedKeyOnJoin()) {
             try {

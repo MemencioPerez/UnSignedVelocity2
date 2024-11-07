@@ -12,7 +12,7 @@ import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSystemChatMessage;
 import com.google.inject.Inject;
-import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
+import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.packet.ConfigurablePacketListener;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
@@ -20,17 +20,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public final class ServerChatListener extends ConfigurablePacketListener {
-    private final UnSignedVelocity plugin;
-
     @Inject
-    public ServerChatListener(UnSignedVelocity plugin) {
-        super(PacketListenerPriority.LOWEST);
-        this.plugin = plugin;
+    public ServerChatListener(Configuration configuration) {
+        super(PacketListenerPriority.LOWEST, configuration);
     }
 
     @Override
     public boolean canBeLoaded() {
-        return plugin.getConfiguration().convertPlayerChatToSystemChat();
+        return configuration.convertPlayerChatToSystemChat();
     }
 
     @Override

@@ -9,21 +9,18 @@ import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.wrapper.status.server.WrapperStatusServerResponse;
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
-import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
+import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.packet.ConfigurablePacketListener;
 
 public final class ServerResponseListener extends ConfigurablePacketListener {
-    private final UnSignedVelocity plugin;
-
     @Inject
-    public ServerResponseListener(UnSignedVelocity plugin) {
-        super(PacketListenerPriority.LOWEST);
-        this.plugin = plugin;
+    public ServerResponseListener(Configuration configuration) {
+        super(PacketListenerPriority.LOWEST, configuration);
     }
 
     @Override
     public boolean canBeLoaded() {
-        return plugin.getConfiguration().sendSafeServerStatus();
+        return configuration.sendSafeServerStatus();
     }
 
     @Override

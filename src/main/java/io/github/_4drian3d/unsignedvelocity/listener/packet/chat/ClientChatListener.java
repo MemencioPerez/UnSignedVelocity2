@@ -8,23 +8,20 @@ import com.github.retrooper.packetevents.util.crypto.MessageSignData;
 import com.github.retrooper.packetevents.util.crypto.SaltSignature;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientChatMessage;
 import com.google.inject.Inject;
-import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
+import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.listener.packet.ConfigurablePacketListener;
 
 import java.time.Instant;
 
 public final class ClientChatListener extends ConfigurablePacketListener {
-    private final UnSignedVelocity plugin;
-
     @Inject
-    public ClientChatListener(UnSignedVelocity plugin) {
-        super(PacketListenerPriority.LOWEST);
-        this.plugin = plugin;
+    public ClientChatListener(Configuration configuration) {
+        super(PacketListenerPriority.LOWEST, configuration);
     }
 
     @Override
     public boolean canBeLoaded() {
-        return plugin.getConfiguration().applyChatMessages();
+        return configuration.applyChatMessages();
     }
 
     @Override
