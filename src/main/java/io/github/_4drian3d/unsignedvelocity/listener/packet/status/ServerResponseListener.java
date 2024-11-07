@@ -1,6 +1,5 @@
 package io.github._4drian3d.unsignedvelocity.listener.packet.status;
 
-import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
@@ -11,9 +10,9 @@ import com.github.retrooper.packetevents.wrapper.status.server.WrapperStatusServ
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.listener.LoadablePacketListener;
+import io.github._4drian3d.unsignedvelocity.listener.ConfigurablePacketListener;
 
-public final class ServerResponseListener extends PacketListenerAbstract implements LoadablePacketListener {
+public final class ServerResponseListener extends ConfigurablePacketListener {
     private final UnSignedVelocity plugin;
 
     @Inject

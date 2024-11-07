@@ -1,6 +1,5 @@
 package io.github._4drian3d.unsignedvelocity.listener.packet.chat;
 
-import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
@@ -10,11 +9,11 @@ import com.github.retrooper.packetevents.util.crypto.SaltSignature;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientChatMessage;
 import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.listener.LoadablePacketListener;
+import io.github._4drian3d.unsignedvelocity.listener.ConfigurablePacketListener;
 
 import java.time.Instant;
 
-public final class ClientChatListener extends PacketListenerAbstract implements LoadablePacketListener {
+public final class ClientChatListener extends ConfigurablePacketListener {
     private final UnSignedVelocity plugin;
 
     @Inject

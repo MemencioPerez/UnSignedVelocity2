@@ -1,7 +1,6 @@
 package io.github._4drian3d.unsignedvelocity;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListenerCommon;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.velocitypowered.api.command.CommandManager;
@@ -16,7 +15,7 @@ import com.velocitypowered.proxy.VelocityServer;
 import com.velocitypowered.proxy.config.VelocityConfiguration;
 import io.github._4drian3d.unsignedvelocity.commands.UnSignedVelocityCommand;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
-import io.github._4drian3d.unsignedvelocity.listener.LoadablePacketListener;
+import io.github._4drian3d.unsignedvelocity.listener.ConfigurablePacketListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatHeaderListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatSessionListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ClientChatListener;
@@ -55,7 +54,7 @@ public class UnSignedVelocity {
     private final Metrics.Factory factory;
     private final ComponentLogger logger;
     private Configuration configuration;
-    private List<? extends LoadablePacketListener> packetListeners;
+    private List<? extends ConfigurablePacketListener> packetListeners;
 
     @Inject
     public UnSignedVelocity(ProxyServer server, Injector injector, @DataDirectory Path dataDirectory, Metrics.Factory factory, ComponentLogger logger) {
@@ -124,12 +123,12 @@ public class UnSignedVelocity {
 
     public void setupLoadablePacketListeners() {
         if (this.packetListeners != null && !this.packetListeners.isEmpty()) {
-            for (LoadablePacketListener packetListener : packetListeners) {
-                PacketEvents.getAPI().getEventManager().unregisterListener((PacketListenerCommon) packetListener);
+            for (ConfigurablePacketListener packetListener : packetListeners) {
+                PacketEvents.getAPI().getEventManager().unregisterListener(packetListener);
             }
         }
 
-        List<? extends LoadablePacketListener> packetListeners = Stream.of(
+        List<? extends ConfigurablePacketListener> packetListeners = Stream.of(
                         LoginListener.class,
                         CommandListener.class,
                         ClientChatListener.class,
@@ -139,10 +138,10 @@ public class UnSignedVelocity {
                         ServerDataListener.class,
                         ServerResponseListener.class
                 ).map(injector::getInstance)
-                .filter(LoadablePacketListener::canBeLoaded)
+                .filter(ConfigurablePacketListener::canBeLoaded)
                 .toList();
 
-        packetListeners.forEach(LoadablePacketListener::register);
+        packetListeners.forEach(ConfigurablePacketListener::register);
         this.packetListeners = packetListeners;
     }
 

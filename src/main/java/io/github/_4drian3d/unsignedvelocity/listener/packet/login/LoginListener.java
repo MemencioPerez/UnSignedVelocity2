@@ -2,7 +2,6 @@ package io.github._4drian3d.unsignedvelocity.listener.packet.login;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
@@ -16,13 +15,13 @@ import com.github.retrooper.packetevents.wrapper.login.server.WrapperLoginServer
 import com.google.inject.Inject;
 import com.velocitypowered.api.proxy.config.ProxyConfig;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.listener.LoadablePacketListener;
+import io.github._4drian3d.unsignedvelocity.listener.ConfigurablePacketListener;
 import io.github._4drian3d.unsignedvelocity.utils.ClientVersionUtil;
 
 import java.security.PublicKey;
 import java.util.concurrent.TimeUnit;
 
-public final class LoginListener extends PacketListenerAbstract implements LoadablePacketListener {
+public final class LoginListener extends ConfigurablePacketListener {
     private final UnSignedVelocity plugin;
     private final Cache<User, byte[]> cache;
 
