@@ -10,7 +10,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerJo
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerServerData;
 import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.listener.ConfigurablePacketListener;
+import io.github._4drian3d.unsignedvelocity.listener.packet.ConfigurablePacketListener;
 
 public final class ServerDataListener extends ConfigurablePacketListener {
     private final UnSignedVelocity plugin;

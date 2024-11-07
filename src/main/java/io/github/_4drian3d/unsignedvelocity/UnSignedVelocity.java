@@ -14,7 +14,7 @@ import com.velocitypowered.proxy.VelocityServer;
 import com.velocitypowered.proxy.config.VelocityConfiguration;
 import io.github._4drian3d.unsignedvelocity.commands.UnSignedVelocityCommand;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
-import io.github._4drian3d.unsignedvelocity.listener.ConfigurablePacketListener;
+import io.github._4drian3d.unsignedvelocity.listener.packet.ConfigurablePacketListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatHeaderListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatSessionListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ClientChatListener;

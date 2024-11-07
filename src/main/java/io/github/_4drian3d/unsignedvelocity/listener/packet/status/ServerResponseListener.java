@@ -10,7 +10,7 @@ import com.github.retrooper.packetevents.wrapper.status.server.WrapperStatusServ
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.listener.ConfigurablePacketListener;
+import io.github._4drian3d.unsignedvelocity.listener.packet.ConfigurablePacketListener;
 
 public final class ServerResponseListener extends ConfigurablePacketListener {
     private final UnSignedVelocity plugin;

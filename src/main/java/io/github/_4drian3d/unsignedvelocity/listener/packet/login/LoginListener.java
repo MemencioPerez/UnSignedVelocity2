@@ -15,7 +15,7 @@ import com.github.retrooper.packetevents.wrapper.login.server.WrapperLoginServer
 import com.google.inject.Inject;
 import com.velocitypowered.api.proxy.config.ProxyConfig;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.listener.ConfigurablePacketListener;
+import io.github._4drian3d.unsignedvelocity.listener.packet.ConfigurablePacketListener;
 import io.github._4drian3d.unsignedvelocity.utils.ClientVersionUtil;
 
 import java.security.PublicKey;

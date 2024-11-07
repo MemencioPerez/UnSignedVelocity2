@@ -1,4 +1,4 @@
-package io.github._4drian3d.unsignedvelocity.listener;
+package io.github._4drian3d.unsignedvelocity.listener.packet;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;

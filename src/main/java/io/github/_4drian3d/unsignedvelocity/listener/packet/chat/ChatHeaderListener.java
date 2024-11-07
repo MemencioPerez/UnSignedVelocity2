@@ -6,7 +6,7 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.UnSignedVelocity;
-import io.github._4drian3d.unsignedvelocity.listener.ConfigurablePacketListener;
+import io.github._4drian3d.unsignedvelocity.listener.packet.ConfigurablePacketListener;
 
 public final class ChatHeaderListener extends ConfigurablePacketListener {
     private final UnSignedVelocity plugin;
