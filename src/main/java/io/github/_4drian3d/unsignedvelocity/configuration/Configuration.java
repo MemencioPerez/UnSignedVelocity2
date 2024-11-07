@@ -10,22 +10,10 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 @ConfigSerializable
-public record Configuration(
-    boolean removeSignedKeyOnJoin,
-
-    boolean removeSignedCommandInformation,
-
-    boolean applyChatMessages,
-
-    boolean convertPlayerChatToSystemChat,
-
-    boolean blockChatHeaderPackets,
-
-    boolean blockChatSessionPackets,
-
-    boolean sendSecureChatData,
-
-    boolean sendSafeServerStatus) {
+public record Configuration(boolean removeSignedKeyOnJoin, boolean removeSignedCommandInformation,
+                            boolean applyChatMessages, boolean convertPlayerChatToSystemChat,
+                            boolean blockChatHeaderPackets, boolean blockChatSessionPackets, boolean sendSecureChatData,
+                            boolean sendSafeServerStatus) {
 
     public static Configuration loadConfig(final Path path) throws IOException {
         final Path configPath = loadFiles(path);

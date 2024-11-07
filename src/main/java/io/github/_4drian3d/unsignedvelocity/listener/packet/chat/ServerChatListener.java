@@ -25,6 +25,23 @@ public final class ServerChatListener extends ConfigurablePacketListener {
         super(PacketListenerPriority.LOWEST, configuration);
     }
 
+    private static @Nullable Component getComponentFromChatPacket(PacketSendEvent event) {
+        final WrapperPlayServerChatMessage packet = new WrapperPlayServerChatMessage(event);
+        ChatMessage chatMessage = packet.getMessage();
+        Component messageContent = chatMessage.getChatContent();
+        if (chatMessage instanceof ChatMessage_v1_19) {
+            messageContent = ((ChatMessage_v1_19) chatMessage).getUnsignedChatContent();
+        } else if (chatMessage instanceof ChatMessage_v1_19_1) {
+            messageContent = ((ChatMessage_v1_19_1) chatMessage).getUnsignedChatContent();
+        } else if (chatMessage instanceof ChatMessage_v1_19_3) {
+            Optional<Component> unsignedChatContent = ((ChatMessage_v1_19_3) chatMessage).getUnsignedChatContent();
+            if (unsignedChatContent.isPresent()) {
+                messageContent = unsignedChatContent.get();
+            }
+        }
+        return messageContent;
+    }
+
     @Override
     public boolean canBeLoaded() {
         return configuration.convertPlayerChatToSystemChat();
@@ -44,22 +61,5 @@ public final class ServerChatListener extends ConfigurablePacketListener {
             event.getUser().sendPacketSilently(newPacket);
             event.setCancelled(true);
         }
-    }
-
-    private static @Nullable Component getComponentFromChatPacket(PacketSendEvent event) {
-        final WrapperPlayServerChatMessage packet = new WrapperPlayServerChatMessage(event);
-        ChatMessage chatMessage = packet.getMessage();
-        Component messageContent = chatMessage.getChatContent();
-        if (chatMessage instanceof ChatMessage_v1_19) {
-            messageContent = ((ChatMessage_v1_19) chatMessage).getUnsignedChatContent();
-        } else if (chatMessage instanceof ChatMessage_v1_19_1) {
-            messageContent = ((ChatMessage_v1_19_1) chatMessage).getUnsignedChatContent();
-        } else if (chatMessage instanceof ChatMessage_v1_19_3) {
-            Optional<Component> unsignedChatContent = ((ChatMessage_v1_19_3) chatMessage).getUnsignedChatContent();
-            if (unsignedChatContent.isPresent()) {
-                messageContent = unsignedChatContent.get();
-            }
-        }
-        return messageContent;
     }
 }

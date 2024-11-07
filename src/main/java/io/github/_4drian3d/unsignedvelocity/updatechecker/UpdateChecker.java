@@ -18,20 +18,6 @@ public class UpdateChecker {
         this.logger = logger;
     }
 
-    public void checkForUpdates() {
-        try {
-            Version latestVersion = getLatestVersion();
-            if (isUpdateAvailable(latestVersion)) {
-                logger.info("There is an update available for UnSignedVelocity: {} (Your version: {})", latestVersion, Constants.VERSION);
-            } else {
-                logger.info(miniMessage().deserialize(
-                        "<#6892bd>You are using the latest version of <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient>"));
-            }
-        } catch (Exception e) {
-            logger.error("Cannot check for updates", e);
-        }
-    }
-
     private static Version getLatestVersion() throws Exception {
         String url = "https://api.github.com/repos/MemencioPerez/UnSignedVelocity/releases/latest";
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
@@ -46,5 +32,19 @@ public class UpdateChecker {
 
     private static boolean isUpdateAvailable(Version latestVersion) {
         return Version.parse(Constants.VERSION).isEqualOrLowerThan(latestVersion);
+    }
+
+    public void checkForUpdates() {
+        try {
+            Version latestVersion = getLatestVersion();
+            if (isUpdateAvailable(latestVersion)) {
+                logger.info("There is an update available for UnSignedVelocity: {} (Your version: {})", latestVersion, Constants.VERSION);
+            } else {
+                logger.info(miniMessage().deserialize(
+                        "<#6892bd>You are using the latest version of <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient>"));
+            }
+        } catch (Exception e) {
+            logger.error("Cannot check for updates", e);
+        }
     }
 }
