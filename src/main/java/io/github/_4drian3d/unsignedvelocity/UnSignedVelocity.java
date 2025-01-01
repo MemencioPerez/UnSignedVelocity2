@@ -92,16 +92,13 @@ public class UnSignedVelocity {
 
     public void loadMainFeatures() throws IOException {
         setupConfigurationModule();
-        Configuration configuration = configurationModule.getConfigurationProvider().get();
 
-        if (configuration.removeSignedKeyOnJoin()) {
-            try {
-                forciblyDisableForceKeyAuthentication();
-            } catch (NoSuchFieldException e) {
-                logger.error("The plugin cannot find 'force-key-authentication' option field, 'remove-signed-key-on-join' option will not work. Contact the developer of this plugin.", e);
-            } catch (IllegalAccessException e) {
-                logger.error("The plugin cannot access 'force-key-authentication' option field, 'remove-signed-key-on-join' option will not work. If setting 'force-key-authentication' to 'false' manually and restarting the proxy doesn't work, contact the developer of this plugin.", e);
-            }
+        try {
+            forciblyDisableForceKeyAuthentication();
+        } catch (NoSuchFieldException e) {
+            logger.error("The plugin cannot find 'force-key-authentication' option field, 'remove-signed-key-on-join' option will not work. Contact the developer of this plugin.", e);
+        } catch (IllegalAccessException e) {
+            logger.error("The plugin cannot access 'force-key-authentication' option field, 'remove-signed-key-on-join' option will not work. If setting 'force-key-authentication' to 'false' manually and restarting the proxy doesn't work, contact the developer of this plugin.", e);
         }
 
         setupConfigurablePacketListeners();
