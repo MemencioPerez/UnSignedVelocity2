@@ -8,7 +8,7 @@ plugins {
 val packetEventsVersion = libs.versions.packetevents.get()
 
 repositories {
-    maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.william278.net/velocity/")
     maven("https://repo.codemc.io/repository/maven-releases/")
 }
