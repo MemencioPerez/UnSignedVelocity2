@@ -31,14 +31,15 @@ public final class UnSignedVelocityCommand {
 
             return switch (argumentProvided) {
                 case "reload" -> {
-                    Component message;
                     try {
+                        if (plugin.isFirstLoad()) {
+                            plugin.setFirstLoad(false);
+                        }
                         plugin.loadMainFeatures();
-                        message = miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>has been successfully reloaded");
+                        plugin.getPluginLoadMessages().forEach(source::sendMessage);
                     } catch (IOException e) {
-                        message = miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>configuration failed to load, check your configuration file and try again");
+                        source.sendMessage(miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>configuration failed to load, check your configuration file and try again"));
                     }
-                    source.sendMessage(message);
                     yield Command.SINGLE_SUCCESS;
                 }
                 case "status" -> {

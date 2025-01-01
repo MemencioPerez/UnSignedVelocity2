@@ -1,5 +1,6 @@
 package io.github._4drian3d.unsignedvelocity;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.velocitypowered.api.command.CommandManager;
@@ -55,6 +56,7 @@ public class UnSignedVelocity {
     private final ComponentLogger logger;
     private ConfigurationModule configurationModule;
     private List<? extends ConfigurablePacketListener> packetListeners;
+    private boolean firstLoad = true;
 
     @Inject
     public UnSignedVelocity(ProxyServer server, Injector injector, @DataDirectory Path dataDirectory, Metrics.Factory factory, ComponentLogger logger) {
@@ -72,29 +74,24 @@ public class UnSignedVelocity {
         try {
             loadMainFeatures();
             forciblyDisableForceKeyAuthentication();
+            registerCommand();
+            getPluginLoadMessages().forEach(logger::info);
+            checkForUpdates();
         } catch (IOException e) {
             logger.error("Cannot load configuration", e);
-            return;
         } catch (NoSuchFieldException e) {
             logger.error("The plugin cannot find 'force-key-authentication' option field, 'remove-signed-key-on-join' option will not work. Contact the developer of this plugin.", e);
-            return;
         } catch (IllegalAccessException e) {
             logger.error("The plugin cannot access 'force-key-authentication' option field, 'remove-signed-key-on-join' option will not work. If setting 'force-key-authentication' to 'false' manually and restarting the proxy doesn't work, contact the developer of this plugin.", e);
-            return;
         }
+    }
 
+    private void registerCommand() {
         CommandManager commandManager = server.getCommandManager();
         CommandMeta commandMeta = commandManager.metaBuilder("unsignedvelocity")
                 .plugin(this)
                 .build();
         server.getCommandManager().register(commandMeta, UnSignedVelocityCommand.createBrigadierCommand(this));
-
-        logger.info(miniMessage().deserialize(
-                "<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>has been successfully loaded"));
-        getPluginStatusMessages().forEach(logger::info);
-
-        UpdateChecker updateChecker = new UpdateChecker(logger);
-        updateChecker.checkForUpdates();
     }
 
     public void loadMainFeatures() throws IOException {
@@ -151,9 +148,16 @@ public class UnSignedVelocity {
         packetListeners = loadablePacketListeners;
     }
 
+    public List<Component> getPluginLoadMessages() {
+        List<Component> messages = getPluginStatusMessages();
+        messages.add(0, miniMessage().deserialize(
+                "<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>has been successfully " + (firstLoad ? "loaded" : "reloaded")));
+        return messages;
+    }
+
     public List<Component> getPluginStatusMessages() {
         Configuration configuration = configurationModule.getConfigurationProvider().get();
-        return List.of(
+        return Lists.newArrayList(
                 miniMessage().deserialize(
                         "<#6892bd>Remove Signed Key: <aqua>" + configuration.removeSignedKeyOnJoin()),
                 miniMessage().deserialize(
@@ -165,5 +169,18 @@ public class UnSignedVelocity {
                 miniMessage().deserialize(
                         "<#6892bd>Secure Chat Data: <aqua>" + configuration.sendSecureChatData() + " <dark_gray>|</dark_gray> <#6892bd>Safe Server Status: <aqua>" + configuration.sendSafeServerStatus())
         );
+    }
+
+    private void checkForUpdates() {
+        UpdateChecker updateChecker = new UpdateChecker(logger);
+        updateChecker.checkForUpdates();
+    }
+
+    public boolean isFirstLoad() {
+        return firstLoad;
+    }
+
+    public void setFirstLoad(boolean firstLoad) {
+        this.firstLoad = firstLoad;
     }
 }
