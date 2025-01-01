@@ -79,10 +79,8 @@ public class UnSignedVelocity {
             checkForUpdates();
         } catch (IOException e) {
             logger.error("Cannot load configuration", e);
-        } catch (NoSuchFieldException e) {
-            logger.error("The plugin cannot find 'force-key-authentication' option field, 'remove-signed-key-on-join' option will not work. Contact the developer of this plugin.", e);
-        } catch (IllegalAccessException e) {
-            logger.error("The plugin cannot access 'force-key-authentication' option field, 'remove-signed-key-on-join' option will not work. If setting 'force-key-authentication' to 'false' manually and restarting the proxy doesn't work, contact the developer of this plugin.", e);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            logger.error("The plugin cannot find or access the 'force-key-authentication' option field of the Velocity configuration. If setting 'force-key-authentication' to 'false' manually and restarting the proxy does not work, contact the developer of this plugin.", e);
         }
     }
 
@@ -112,14 +110,13 @@ public class UnSignedVelocity {
 
     private void forciblyDisableForceKeyAuthentication() throws NoSuchFieldException, IllegalAccessException {
         VelocityConfiguration velocityConfiguration = ((VelocityServer) server).getConfiguration();
-        Field forceKeyAuthenticationField = velocityConfiguration.getClass().getDeclaredField("forceKeyAuthentication");
-        forceKeyAuthenticationField.setAccessible(true);
-        boolean forceKeyAuthenticationValue = (boolean) forceKeyAuthenticationField.get(velocityConfiguration);
-        if (forceKeyAuthenticationValue) {
+        if (velocityConfiguration.isForceKeyAuthentication()) {
             logger.warn("WARN: The 'force-key-authentication' option in the Velocity configuration file (velocity.toml) is set to 'true'.");
             logger.warn("UnSignedVelocity requires that option to be set to 'false', so it will try to set it to 'true' forcefully at runtime.");
             logger.warn("If you want to hide this warning, set 'force-key-authentication' to 'false' in Velocity settings and restart the proxy.");
             logger.warn("Trying to set 'force-key-authentication' to false...");
+            Field forceKeyAuthenticationField = velocityConfiguration.getClass().getDeclaredField("forceKeyAuthentication");
+            forceKeyAuthenticationField.setAccessible(true);
             forceKeyAuthenticationField.setBoolean(velocityConfiguration, false);
             forceKeyAuthenticationField.setAccessible(false);
             logger.warn("The 'force-key-authentication' field was found and set to false at runtime (this doesn't modify velocity.toml file).");
