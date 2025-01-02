@@ -78,7 +78,7 @@ public class UnSignedVelocity {
             getPluginLoadMessages().forEach(logger::info);
             checkForUpdates();
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("The plugin cannot find or access the 'force-key-authentication' option field of the Velocity configuration. If setting 'force-key-authentication' to 'false' manually and restarting the proxy does not work, contact the developer of this plugin.", e);
+            logger.error("Failed to access 'force-key-authentication' option in Velocity configuration. Try setting it to 'false' manually and restarting the proxy. If the issue persists, please contact the plugin developer for assistance.", e);
         } catch (IOException e) {
             logger.error("Cannot load configuration", e);
         }
