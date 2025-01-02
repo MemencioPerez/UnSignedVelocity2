@@ -167,8 +167,7 @@ public class UnSignedVelocity {
     }
 
     private void checkForUpdates() {
-        UpdateChecker updateChecker = new UpdateChecker(logger);
-        updateChecker.checkForUpdates();
+        injector.getInstance(UpdateChecker.class).checkForUpdates();
     }
 
     public boolean isFirstLoad() {

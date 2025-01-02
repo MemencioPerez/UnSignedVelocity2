@@ -2,6 +2,7 @@ package io.github._4drian3d.unsignedvelocity.updatechecker;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.utils.Constants;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 
@@ -14,6 +15,7 @@ import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 public class UpdateChecker {
     private final ComponentLogger logger;
 
+    @Inject
     public UpdateChecker(ComponentLogger logger) {
         this.logger = logger;
     }
