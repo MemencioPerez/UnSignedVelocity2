@@ -8,7 +8,7 @@ bstats = "3.1.0"
 
 blossom = "2.1.0"
 runvelocity = "2.3.1"
-shadow = "8.1.1"
+shadow = "9.0.0-beta4"
 
 packetevents = "2.7.0"
 
@@ -25,4 +25,4 @@ packetevents = { group = "com.github.retrooper", name = "packetevents-velocity",
 
 blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
 runvelocity = { id = "xyz.jpenilla.run-velocity", version.ref = "runvelocity" }
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
