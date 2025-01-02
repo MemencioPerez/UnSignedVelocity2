@@ -69,11 +69,10 @@ public class UnSignedVelocity {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
-        factory.make(this, 17514);
-
         try {
             forciblyDisableForceKeyAuthentication();
             loadMainFeatures();
+            factory.make(this, 17514);
             registerCommand();
             getPluginLoadMessages().forEach(logger::info);
             checkForUpdates();
