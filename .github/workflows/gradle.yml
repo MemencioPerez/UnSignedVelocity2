@@ -26,5 +26,5 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: UnSignedVelocity
-          path: build/libs/UnSignedVelocity-*.jar
+          name: UnSignedVelocity2
+          path: build/libs/UnSignedVelocity2-*.jar
