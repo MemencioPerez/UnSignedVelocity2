@@ -110,8 +110,8 @@ public class UnSignedVelocity {
     private void forciblyDisableForceKeyAuthentication() throws NoSuchFieldException, IllegalAccessException {
         VelocityConfiguration velocityConfiguration = ((VelocityServer) server).getConfiguration();
         if (velocityConfiguration.isForceKeyAuthentication()) {
-            logger.warn("Velocity configuration file (velocity.toml) has 'force-key-authentication' enabled, which is incompatible with UnSignedVelocity.");
-            logger.warn("UnSignedVelocity will attempt to disable 'force-key-authentication' at runtime. To avoid this warning, set 'force-key-authentication' to 'false' in Velocity settings and restart the proxy.");
+            logger.warn("Velocity configuration file (velocity.toml) has 'force-key-authentication' enabled, which is incompatible with UnSignedVelocity2.");
+            logger.warn("UnSignedVelocity2 will attempt to disable 'force-key-authentication' at runtime. To avoid this warning, set 'force-key-authentication' to 'false' in Velocity settings and restart the proxy.");
             logger.warn("Disabling 'force-key-authentication' at runtime...");
             Field forceKeyAuthenticationField = velocityConfiguration.getClass().getDeclaredField("forceKeyAuthentication");
             forceKeyAuthenticationField.setAccessible(true);
@@ -146,7 +146,7 @@ public class UnSignedVelocity {
     public List<Component> getPluginLoadMessages() {
         List<Component> messages = getPluginStatusMessages();
         messages.add(0, miniMessage().deserialize(
-                "<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>has been successfully " + (firstLoad ? "loaded" : "reloaded")));
+                "<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity2</gradient> <#6892bd>has been successfully " + (firstLoad ? "loaded" : "reloaded")));
         return messages;
     }
 

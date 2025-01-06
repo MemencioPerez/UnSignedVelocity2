@@ -19,7 +19,7 @@ public final class UnSignedVelocityCommand {
     public static BrigadierCommand createBrigadierCommand(final UnSignedVelocity plugin) {
         LiteralCommandNode<CommandSource> literalCommandNode = BrigadierCommand.literalArgumentBuilder("unsignedvelocity").requires(source -> source.hasPermission("unsignedvelocity.admin")).executes(context -> {
             CommandSource source = context.getSource();
-            List<Component> messages = List.of(miniMessage().deserialize("<#6892bd>You are using <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>" + Constants.VERSION + " by 4drian3d and MemencioPerez"), miniMessage().deserialize("<#6892bd>Available commands:"), miniMessage().deserialize("<#6892bd>/unsignedvelocity reload <dark_gray>-</dark_gray> <#6892bd>Reloads the plugin configuration and packet listeners"), miniMessage().deserialize("<#6892bd>/unsignedvelocity status <dark_gray>-</dark_gray> <#6892bd>Displays the plugin status"));
+            List<Component> messages = List.of(miniMessage().deserialize("<#6892bd>You are using <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity2</gradient> <#6892bd>" + Constants.VERSION + " by 4drian3d & MemencioPerez"), miniMessage().deserialize("<#6892bd>Available commands:"), miniMessage().deserialize("<#6892bd>/unsignedvelocity reload <dark_gray>-</dark_gray> <#6892bd>Reloads the plugin configuration and packet listeners"), miniMessage().deserialize("<#6892bd>/unsignedvelocity status <dark_gray>-</dark_gray> <#6892bd>Displays the plugin status"));
             messages.forEach(source::sendMessage);
             return Command.SINGLE_SUCCESS;
         }).then(BrigadierCommand.requiredArgumentBuilder("subcommand", StringArgumentType.word()).suggests((ctx, builder) -> {
@@ -38,7 +38,7 @@ public final class UnSignedVelocityCommand {
                         plugin.loadMainFeatures();
                         plugin.getPluginLoadMessages().forEach(source::sendMessage);
                     } catch (IOException e) {
-                        source.sendMessage(miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity</gradient> <#6892bd>configuration failed to load, check your configuration file and try again"));
+                        source.sendMessage(miniMessage().deserialize("<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity2</gradient> <#6892bd>configuration failed to load, check your configuration file and try again"));
                     }
                     yield Command.SINGLE_SUCCESS;
                 }
