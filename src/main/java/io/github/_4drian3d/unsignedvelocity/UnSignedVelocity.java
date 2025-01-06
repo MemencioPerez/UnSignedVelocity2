@@ -43,7 +43,7 @@ import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 @Plugin(
         id = "unsignedvelocity",
         name = "UnSignedVelocity",
-        authors = {"4drian3d"},
+        authors = {"4drian3d", "MemencioPerez"},
         version = Constants.VERSION,
         dependencies = { @Dependency(id = "packetevents") }
 )
