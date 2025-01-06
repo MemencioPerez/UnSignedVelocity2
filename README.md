@@ -17,4 +17,4 @@ This is a fork of the original UnSignedVelocity made by 4drian3d, updated to wor
 - [PacketEvents 2.4.0+](https://modrinth.com/plugin/packetevents)
 
 ## Metrics
-[![metrics](https://bstats.org/signatures/velocity/UnSignedVelocity2.svg)](https://bstats.org/plugin/velocity/UnSignedVelocity/24373)
+[![metrics](https://bstats.org/signatures/velocity/UnSignedVelocity2.svg)](https://bstats.org/plugin/velocity/UnSignedVelocity2/24373)
