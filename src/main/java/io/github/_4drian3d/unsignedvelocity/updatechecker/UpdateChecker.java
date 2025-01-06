@@ -21,7 +21,7 @@ public class UpdateChecker {
     }
 
     private static Version getLatestVersion() throws Exception {
-        String url = "https://api.github.com/repos/MemencioPerez/UnSignedVelocity/releases/latest";
+        String url = "https://api.github.com/repos/MemencioPerez/UnSignedVelocity2/releases/latest";
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Accept", "application/json");
