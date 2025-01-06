@@ -72,7 +72,7 @@ public class UnSignedVelocity {
         try {
             forciblyDisableForceKeyAuthentication();
             loadMainFeatures();
-            factory.make(this, 17514);
+            factory.make(this, 24373);
             registerCommand();
             getPluginLoadMessages().forEach(logger::info);
             checkForUpdates();
