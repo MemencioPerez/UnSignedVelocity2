@@ -41,8 +41,8 @@ import java.util.stream.Stream;
 import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
 @Plugin(
-        id = "unsignedvelocity",
-        name = "UnSignedVelocity",
+        id = "unsignedvelocity2",
+        name = "UnSignedVelocity2",
         authors = {"4drian3d", "MemencioPerez"},
         version = Constants.VERSION,
         dependencies = { @Dependency(id = "packetevents") }
