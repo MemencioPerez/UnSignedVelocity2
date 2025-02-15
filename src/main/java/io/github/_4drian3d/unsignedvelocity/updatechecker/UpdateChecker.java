@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import io.github._4drian3d.unsignedvelocity.utils.Constants;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -20,7 +21,7 @@ public class UpdateChecker {
         this.logger = logger;
     }
 
-    private static Version getLatestVersion() throws Exception {
+    private static Version getLatestVersion() throws IOException {
         String url = "https://api.github.com/repos/MemencioPerez/UnSignedVelocity2/releases/latest";
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod("GET");
@@ -43,7 +44,7 @@ public class UpdateChecker {
             } else {
                 logger.info(miniMessage().deserialize("<#6892bd>You are using the latest version of <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity2</gradient>"));
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Cannot check for updates", e);
         }
     }
