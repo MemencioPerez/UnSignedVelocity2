@@ -13,7 +13,7 @@ import java.net.URL;
 
 import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
-public class UpdateChecker {
+public final class UpdateChecker {
     private final ComponentLogger logger;
 
     @Inject
@@ -38,11 +38,14 @@ public class UpdateChecker {
             Version currentVersion = Version.parse(Constants.VERSION);
             Version latestVersion = getLatestVersion();
             if (currentVersion.isLowerThan(latestVersion)) {
-                logger.info(miniMessage().deserialize("<#6892bd>There is an update available for <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity2</gradient><#6892bd>: " + latestVersion + " (Your version: " + currentVersion + ")"));
+                logger.info(miniMessage().deserialize(
+                        "<#6892bd>There is an update available for <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity2</gradient><#6892bd>: " + latestVersion + " (Your version: " + currentVersion + ")"));
             } else if (currentVersion.isHigherThan(latestVersion)) {
-                logger.info(miniMessage().deserialize("<#6892bd>You are using a development build of <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity2</gradient><#6892bd>: " + currentVersion + " (Latest release: " + latestVersion + ")"));
+                logger.info(miniMessage().deserialize(
+                        "<#6892bd>You are using a development build of <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity2</gradient><#6892bd>: " + currentVersion + " (Latest release: " + latestVersion + ")"));
             } else {
-                logger.info(miniMessage().deserialize("<#6892bd>You are using the latest version of <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity2</gradient>"));
+                logger.info(miniMessage().deserialize(
+                        "<#6892bd>You are using the latest version of <gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity2</gradient>"));
             }
         } catch (IOException e) {
             logger.error("Cannot check for updates", e);

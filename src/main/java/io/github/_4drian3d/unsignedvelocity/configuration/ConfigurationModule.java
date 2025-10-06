@@ -2,7 +2,7 @@ package io.github._4drian3d.unsignedvelocity.configuration;
 
 import com.google.inject.AbstractModule;
 
-public class ConfigurationModule extends AbstractModule {
+public final class ConfigurationModule extends AbstractModule {
     private final ConfigurationProvider configurationProvider;
 
     public ConfigurationModule(Configuration initialConfiguration) {

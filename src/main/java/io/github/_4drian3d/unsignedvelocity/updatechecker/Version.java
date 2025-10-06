@@ -1,5 +1,7 @@
 package io.github._4drian3d.unsignedvelocity.updatechecker;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Optional;
 
 public record Version(int major, int minor, int patch, Optional<String> preRelease) implements Comparable<Version> {
@@ -75,7 +77,7 @@ public record Version(int major, int minor, int patch, Optional<String> preRelea
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return major + "." + minor + "." + patch + preRelease.map(s -> "-" + s).orElse("");
     }
 }

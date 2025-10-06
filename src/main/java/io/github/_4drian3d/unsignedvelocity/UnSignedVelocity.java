@@ -3,8 +3,6 @@ package io.github._4drian3d.unsignedvelocity;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.velocitypowered.api.command.CommandManager;
-import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Dependency;
@@ -47,7 +45,7 @@ import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
         version = Constants.VERSION,
         dependencies = { @Dependency(id = "packetevents") }
 )
-public class UnSignedVelocity {
+public final class UnSignedVelocity {
 
     private final ProxyServer server;
     private Injector injector;
@@ -73,7 +71,7 @@ public class UnSignedVelocity {
             forciblyDisableForceKeyAuthentication();
             loadMainFeatures();
             factory.make(this, 24373);
-            registerCommand();
+            UnSignedVelocityCommand.register(server.getCommandManager(), this);
             getPluginLoadMessages().forEach(logger::info);
             checkForUpdates();
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -81,14 +79,6 @@ public class UnSignedVelocity {
         } catch (IOException e) {
             logger.error("Cannot load configuration", e);
         }
-    }
-
-    private void registerCommand() {
-        CommandManager commandManager = server.getCommandManager();
-        CommandMeta commandMeta = commandManager.metaBuilder("unsignedvelocity")
-                .plugin(this)
-                .build();
-        server.getCommandManager().register(commandMeta, UnSignedVelocityCommand.createBrigadierCommand(this));
     }
 
     public void loadMainFeatures() throws IOException {
@@ -116,7 +106,6 @@ public class UnSignedVelocity {
             Field forceKeyAuthenticationField = velocityConfiguration.getClass().getDeclaredField("forceKeyAuthentication");
             forceKeyAuthenticationField.setAccessible(true);
             forceKeyAuthenticationField.setBoolean(velocityConfiguration, false);
-            forceKeyAuthenticationField.setAccessible(false);
             logger.warn("Successfully disabled 'force-key-authentication' at runtime. Note that this change does not persist to velocity.toml.");
         }
     }
