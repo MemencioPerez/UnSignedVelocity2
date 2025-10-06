@@ -73,7 +73,7 @@ public final class UnSignedVelocity {
             factory.make(this, 24373);
             UnSignedVelocityCommand.register(server.getCommandManager(), this);
             getPluginLoadMessages().forEach(logger::info);
-            checkForUpdates();
+            UpdateChecker.checkForUpdates(logger);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             logger.error("Failed to access 'force-key-authentication' option in Velocity configuration. Try setting it to 'false' manually and restarting the proxy. If the issue persists, please contact the plugin developer for assistance.", e);
         } catch (IOException e) {
@@ -153,10 +153,6 @@ public final class UnSignedVelocity {
                 miniMessage().deserialize(
                         "<#6892bd>Secure Chat Data: <aqua>" + configuration.sendSecureChatData() + " <dark_gray>|</dark_gray> <#6892bd>Safe Server Status: <aqua>" + configuration.sendSafeServerStatus())
         );
-    }
-
-    private void checkForUpdates() {
-        injector.getInstance(UpdateChecker.class).checkForUpdates();
     }
 
     public boolean isFirstLoad() {
