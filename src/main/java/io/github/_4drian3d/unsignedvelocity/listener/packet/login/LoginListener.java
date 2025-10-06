@@ -33,7 +33,6 @@ public final class LoginListener extends ConfigurablePacketListener {
     private Cache<User, byte[]> setupCache(ProxyConfig proxyConfig) {
         return Caffeine.newBuilder()
                 .expireAfterWrite(proxyConfig.getConnectTimeout(), TimeUnit.MILLISECONDS)
-                .maximumSize(proxyConfig.getShowMaxPlayers())
                 .weakKeys()
                 .build();
     }
