@@ -24,7 +24,7 @@ jobs:
           max_attempts: 2
           command: gradle clean build
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: UnSignedVelocity2
           path: build/libs/UnSignedVelocity2-*.jar
