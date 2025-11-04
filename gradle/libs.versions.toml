@@ -10,7 +10,7 @@ blossom = "2.1.0"
 runvelocity = "3.0.1"
 shadow = "9.2.2"
 
-packetevents = "2.9.5"
+packetevents = "2.10.1"
 
 [libraries]
 
