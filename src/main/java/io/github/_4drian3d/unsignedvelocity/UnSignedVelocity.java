@@ -15,13 +15,13 @@ import io.github._4drian3d.unsignedvelocity.commands.UnSignedVelocityCommand;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
 import io.github._4drian3d.unsignedvelocity.configuration.ConfigurationModule;
 import io.github._4drian3d.unsignedvelocity.configuration.ConfigurationProvider;
-import io.github._4drian3d.unsignedvelocity.listener.packet.ConfigurablePacketListener;
+import io.github._4drian3d.unsignedvelocity.listener.ConfigurableListener;
+import io.github._4drian3d.unsignedvelocity.listener.event.GameProfileRequestListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatHeaderListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ChatSessionListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ClientChatListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.chat.ServerChatListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.command.CommandListener;
-import io.github._4drian3d.unsignedvelocity.listener.packet.login.LoginListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.data.ServerDataListener;
 import io.github._4drian3d.unsignedvelocity.listener.packet.status.ServerResponseListener;
 import io.github._4drian3d.unsignedvelocity.updatechecker.UpdateChecker;
@@ -33,6 +33,8 @@ import org.bstats.velocity.Metrics;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
@@ -52,7 +54,7 @@ public final class UnSignedVelocity {
     private final Metrics.Factory factory;
     private final ComponentLogger logger;
     private ConfigurationModule configurationModule;
-    private List<? extends ConfigurablePacketListener> packetListeners;
+    private Set<? extends ConfigurableListener> listeners;
 
     @Inject
     public UnSignedVelocity(ProxyServer server, Injector injector, @DataDirectory Path dataDirectory, Metrics.Factory factory, ComponentLogger logger) {
@@ -79,7 +81,7 @@ public final class UnSignedVelocity {
 
     public void loadMainFeatures() throws IOException {
         setupConfigurationModule();
-        setupConfigurablePacketListeners();
+        setupConfigurableListeners();
     }
 
     private void setupConfigurationModule() throws IOException {
@@ -104,13 +106,13 @@ public final class UnSignedVelocity {
         }
     }
 
-    private void setupConfigurablePacketListeners() {
-        if (packetListeners != null && !packetListeners.isEmpty()) {
-            packetListeners.forEach(ConfigurablePacketListener::unregister);
+    private void setupConfigurableListeners() {
+        if (listeners != null && !listeners.isEmpty()) {
+            listeners.forEach(ConfigurableListener::unregister);
         }
 
-        List<? extends ConfigurablePacketListener> loadablePacketListeners = Stream.of(
-                        LoginListener.class,
+        Set<? extends ConfigurableListener> loadableListeners = Stream.of(
+                        GameProfileRequestListener.class,
                         CommandListener.class,
                         ClientChatListener.class,
                         ServerChatListener.class,
@@ -119,11 +121,11 @@ public final class UnSignedVelocity {
                         ServerDataListener.class,
                         ServerResponseListener.class
                 ).map(injector::getInstance)
-                .filter(ConfigurablePacketListener::canBeLoaded)
-                .toList();
+                .filter(ConfigurableListener::canBeLoaded)
+                .collect(Collectors.toSet());
 
-        loadablePacketListeners.forEach(ConfigurablePacketListener::register);
-        packetListeners = loadablePacketListeners;
+        loadableListeners.forEach(ConfigurableListener::register);
+        listeners = loadableListeners;
     }
 
     public List<Component> getPluginLoadMessages(boolean firstLoad) {

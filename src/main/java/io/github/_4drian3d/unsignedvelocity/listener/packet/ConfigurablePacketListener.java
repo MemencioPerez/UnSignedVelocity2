@@ -4,8 +4,9 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import io.github._4drian3d.unsignedvelocity.configuration.Configuration;
+import io.github._4drian3d.unsignedvelocity.listener.ConfigurableListener;
 
-public abstract class ConfigurablePacketListener extends PacketListenerAbstract {
+public abstract class ConfigurablePacketListener extends PacketListenerAbstract implements ConfigurableListener {
     protected final Configuration configuration;
 
     public ConfigurablePacketListener(PacketListenerPriority priority, Configuration configuration) {
@@ -13,13 +14,11 @@ public abstract class ConfigurablePacketListener extends PacketListenerAbstract 
         this.configuration = configuration;
     }
 
-    public void register() {
+    public final void register() {
         PacketEvents.getAPI().getEventManager().registerListener(this);
     }
 
-    public void unregister() {
+    public final void unregister() {
         PacketEvents.getAPI().getEventManager().unregisterListener(this);
     }
-
-    public abstract boolean canBeLoaded();
 }
