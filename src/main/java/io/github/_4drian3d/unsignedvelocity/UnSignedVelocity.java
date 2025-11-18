@@ -98,11 +98,10 @@ public final class UnSignedVelocity {
     private void forciblyDisableForceKeyAuthentication() {
         VelocityConfiguration velocityConfiguration = ((VelocityServer) server).getConfiguration();
         if (velocityConfiguration.isForceKeyAuthentication()) {
-            logger.warn("Velocity configuration file (velocity.toml) has 'force-key-authentication' enabled, which is incompatible with UnSignedVelocity2.");
-            logger.warn("UnSignedVelocity2 will attempt to disable 'force-key-authentication' at runtime. To avoid this warning, set 'force-key-authentication' to 'false' in Velocity settings and restart the proxy.");
-            logger.warn("Disabling 'force-key-authentication' at runtime...");
+            logger.warn("The “force-key-authentication” option is enabled in the Velocity configuration file (velocity.toml).");
+            logger.warn("This option is incompatible with UnSignedVelocity, so the plugin will disable it.");
+            logger.warn("To avoid this warning, set the “force-key-authentication” option to “false” in the Velocity configuration and restart the proxy.");
             System.setProperty("auth.forceSecureProfiles", "false");
-            logger.warn("Successfully disabled 'force-key-authentication' at runtime. Note that this change does not persist to velocity.toml.");
         }
     }
 
