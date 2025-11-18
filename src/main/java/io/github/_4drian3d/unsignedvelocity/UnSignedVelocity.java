@@ -31,7 +31,6 @@ import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bstats.velocity.Metrics;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
@@ -73,8 +72,6 @@ public final class UnSignedVelocity {
             UnSignedVelocityCommand.register(server.getCommandManager(), this);
             getPluginLoadMessages(true).forEach(logger::info);
             UpdateChecker.checkForUpdates(logger);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Failed to access 'force-key-authentication' option in Velocity configuration. Try setting it to 'false' manually and restarting the proxy. If the issue persists, please contact the plugin developer for assistance.", e);
         } catch (IOException e) {
             logger.error("Cannot load configuration", e);
         }
@@ -96,15 +93,13 @@ public final class UnSignedVelocity {
         }
     }
 
-    private void forciblyDisableForceKeyAuthentication() throws NoSuchFieldException, IllegalAccessException {
+    private void forciblyDisableForceKeyAuthentication() {
         VelocityConfiguration velocityConfiguration = ((VelocityServer) server).getConfiguration();
         if (velocityConfiguration.isForceKeyAuthentication()) {
             logger.warn("Velocity configuration file (velocity.toml) has 'force-key-authentication' enabled, which is incompatible with UnSignedVelocity2.");
             logger.warn("UnSignedVelocity2 will attempt to disable 'force-key-authentication' at runtime. To avoid this warning, set 'force-key-authentication' to 'false' in Velocity settings and restart the proxy.");
             logger.warn("Disabling 'force-key-authentication' at runtime...");
-            Field forceKeyAuthenticationField = velocityConfiguration.getClass().getDeclaredField("forceKeyAuthentication");
-            forceKeyAuthenticationField.setAccessible(true);
-            forceKeyAuthenticationField.setBoolean(velocityConfiguration, false);
+            System.setProperty("auth.forceSecureProfiles", "false");
             logger.warn("Successfully disabled 'force-key-authentication' at runtime. Note that this change does not persist to velocity.toml.");
         }
     }
