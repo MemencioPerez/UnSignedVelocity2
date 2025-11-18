@@ -43,11 +43,8 @@ public final class UnSignedVelocityCommand {
 
     private static int reload(CommandSource source, UnSignedVelocity plugin) {
         try {
-            if (plugin.isFirstLoad()) {
-                plugin.setFirstLoad(false);
-            }
             plugin.loadMainFeatures();
-            plugin.getPluginLoadMessages().forEach(source::sendMessage);
+            plugin.getPluginLoadMessages(false).forEach(source::sendMessage);
         } catch (IOException e) {
             source.sendMessage(miniMessage().deserialize(
                     "<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity2</gradient> <#6892bd>configuration failed to load, check your configuration file and try again"));

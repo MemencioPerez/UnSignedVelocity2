@@ -54,7 +54,6 @@ public final class UnSignedVelocity {
     private final ComponentLogger logger;
     private ConfigurationModule configurationModule;
     private List<? extends ConfigurablePacketListener> packetListeners;
-    private boolean firstLoad = true;
 
     @Inject
     public UnSignedVelocity(ProxyServer server, Injector injector, @DataDirectory Path dataDirectory, Metrics.Factory factory, ComponentLogger logger) {
@@ -72,7 +71,7 @@ public final class UnSignedVelocity {
             loadMainFeatures();
             factory.make(this, 24373);
             UnSignedVelocityCommand.register(server.getCommandManager(), this);
-            getPluginLoadMessages().forEach(logger::info);
+            getPluginLoadMessages(true).forEach(logger::info);
             UpdateChecker.checkForUpdates(logger);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             logger.error("Failed to access 'force-key-authentication' option in Velocity configuration. Try setting it to 'false' manually and restarting the proxy. If the issue persists, please contact the plugin developer for assistance.", e);
@@ -132,7 +131,7 @@ public final class UnSignedVelocity {
         packetListeners = loadablePacketListeners;
     }
 
-    public List<Component> getPluginLoadMessages() {
+    public List<Component> getPluginLoadMessages(boolean firstLoad) {
         List<Component> messages = getPluginStatusMessages();
         messages.add(0, miniMessage().deserialize(
                 "<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity2</gradient> <#6892bd>has been successfully " + (firstLoad ? "loaded" : "reloaded")));
@@ -153,13 +152,5 @@ public final class UnSignedVelocity {
                 miniMessage().deserialize(
                         "<#6892bd>Secure Chat Data: <aqua>" + configuration.sendSecureChatData() + " <dark_gray>|</dark_gray> <#6892bd>Safe Server Status: <aqua>" + configuration.sendSafeServerStatus())
         );
-    }
-
-    public boolean isFirstLoad() {
-        return firstLoad;
-    }
-
-    public void setFirstLoad(boolean firstLoad) {
-        this.firstLoad = firstLoad;
     }
 }
