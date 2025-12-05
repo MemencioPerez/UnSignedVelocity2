@@ -23,7 +23,7 @@ public final class GameProfileRequestListener implements ConfigurableListener {
 
     @Subscribe
     public void onGameProfileRequest(GameProfileRequestEvent event) {
-        ((LoginInboundConnection) event.getConnection()).setPlayerKey(null);
+        if (event.getConnection() instanceof LoginInboundConnection loginInboundConnection) loginInboundConnection.setPlayerKey(null);
     }
 
     @Override
