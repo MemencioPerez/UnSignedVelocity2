@@ -8,7 +8,7 @@ import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 
 import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
@@ -19,7 +19,7 @@ public final class UpdateChecker {
 
     private static Version getLatestVersion() throws IOException {
         String url = "https://api.github.com/repos/MemencioPerez/UnSignedVelocity2/releases/latest";
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        HttpURLConnection connection = (HttpURLConnection) URI.create(url).toURL().openConnection();
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Accept", "application/json");
 
