@@ -129,7 +129,7 @@ public final class UnSignedVelocity {
 
     public List<Component> getPluginLoadMessages(boolean firstLoad) {
         List<Component> messages = getPluginStatusMessages();
-        messages.add(0, miniMessage().deserialize(
+        messages.addFirst(miniMessage().deserialize(
                 "<gradient:#166D3B:#7F8C8D:#A29BFE>UnSignedVelocity2</gradient> <#6892bd>has been successfully " + (firstLoad ? "loaded" : "reloaded")));
         return messages;
     }
