@@ -24,14 +24,12 @@ public final class ServerChatListener extends ConfigurablePacketListener {
     private static Component getComponentFromChatPacket(PacketSendEvent event) {
         WrapperPlayServerChatMessage packet = new WrapperPlayServerChatMessage(event);
         ChatMessage chatMessage = packet.getMessage();
-        if (chatMessage instanceof ChatMessage_v1_19_3 chatMessage_v1_19_3) {
-            return chatMessage_v1_19_3.getUnsignedChatContent().orElseThrow();
-        } else if (chatMessage instanceof ChatMessage_v1_19_1 chatMessage_v1_19_1) {
-            return chatMessage_v1_19_1.getUnsignedChatContent();
-        } else if (chatMessage instanceof ChatMessage_v1_19 chatMessage_v1_19) {
-            return chatMessage_v1_19.getUnsignedChatContent();
-        }
-        return chatMessage.getChatContent();
+        return switch (chatMessage) {
+            case ChatMessage_v1_19_3 chatMessage_v1_19_3 -> chatMessage_v1_19_3.getUnsignedChatContent().orElse(chatMessage_v1_19_3.getChatContent());
+            case ChatMessage_v1_19_1 chatMessage_v1_19_1 -> chatMessage_v1_19_1.getUnsignedChatContent();
+            case ChatMessage_v1_19 chatMessage_v1_19 -> chatMessage_v1_19.getUnsignedChatContent();
+            default -> chatMessage.getChatContent();
+        };
     }
 
     @Override
